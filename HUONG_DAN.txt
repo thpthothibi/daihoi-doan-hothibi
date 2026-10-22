@@ -1,0 +1,6 @@
+1. Giải nén ZIP. Upload index.html và docs-config.json vào thư mục gốc kho thpthothibi/daihoi-doan-hothibi, thay file cũ rồi Commit changes.
+2. Chờ GitHub Pages và Cloudflare Pages triển khai xong, mở đúng trình duyệt Cloudflare đang có PDF và nhấn Ctrl+F5. Không xóa dữ liệu trang web.
+3. Đăng nhập Admin > Quản trị Google Drive & QR. Khung Đồng bộ văn kiện đã điền địa chỉ Worker. Nhập ADMIN_SYNC_TOKEN rồi bấm Kết nối.
+4. Bấm Chuyển văn kiện cũ lên máy chủ > xác nhận.
+5. Mở GitHub bằng máy khác để đối chiếu.
+Không cần thay Worker đã hoạt động. Gói này không chứa API Key hoặc khóa quản trị. Chỉ đồng bộ văn kiện; điểm danh và phiếu bầu vẫn lưu trên thiết bị.

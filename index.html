@@ -621,6 +621,21 @@ body:has(#modal-qr-login.flex) { overflow:hidden; }
               </div>
             </div>
 
+            <div class="rounded-xl border border-sky-200 bg-sky-50/60 p-3.5 space-y-2.5 text-xs">
+              <div class="font-extrabold text-sky-900">Đồng bộ văn kiện giữa các thiết bị</div>
+              <label class="block font-semibold text-slate-700" for="docs-sync-api">Địa chỉ Worker văn kiện</label>
+              <input id="docs-sync-api" type="url" placeholder="https://htb-van-kien-api.TEN_CUA_BAN.workers.dev" class="w-full min-w-0 px-3 py-2 rounded-xl border border-slate-300 bg-white font-mono text-xs" />
+              <label class="block font-semibold text-slate-700" for="docs-sync-key">Khóa quản trị đồng bộ</label>
+              <input id="docs-sync-key" type="password" autocomplete="off" placeholder="Khóa riêng đã đặt trong Worker" class="w-full min-w-0 px-3 py-2 rounded-xl border border-slate-300 bg-white" />
+              <div class="flex flex-wrap gap-2">
+                <button onclick="connectDocsCloud()" class="px-3 py-2 rounded-lg bg-blue-600 text-white font-bold">Kết nối</button>
+                <button onclick="downloadDocsPublicConfig()" class="px-3 py-2 rounded-lg bg-white border border-sky-200 text-sky-800 font-bold">Tải docs-config.json</button>
+                <button onclick="publishPreviousDocuments()" class="px-3 py-2 rounded-lg bg-emerald-600 text-white font-bold">Chuyển văn kiện cũ lên máy chủ</button>
+              </div>
+              <p id="docs-sync-status" role="status" aria-live="polite" class="font-semibold text-sky-800">Chưa cấu hình đồng bộ</p>
+              <p class="text-slate-600">Cấu hình một lần, sau đó thêm tài liệu bằng nút bên dưới. Đại biểu tự tải danh sách chung.</p>
+            </div>
+
             <div class="space-y-3.5 text-xs">
               <!-- Google Drive ID -->
               <div class="grid grid-cols-1 sm:grid-cols-12 gap-2 items-center">
@@ -648,7 +663,7 @@ body:has(#modal-qr-login.flex) { overflow:hidden; }
               <div class="grid grid-cols-1 sm:grid-cols-12 gap-2 items-center">
                 <label class="sm:col-span-3 font-bold text-slate-700">Chế độ tải dữ liệu</label>
                 <div class="sm:col-span-9 flex flex-wrap gap-1.5">
-                  <button id="drive-mode-cache" onclick="setAdminDriveLoadMode('CACHE')" class="px-3 py-1.5 rounded-lg font-bold bg-blue-600 text-white">⚡ Cloudflare Cache (Khuyến nghị)</button>
+                  <button id="drive-mode-cache" onclick="setAdminDriveLoadMode('CACHE')" class="px-3 py-1.5 rounded-lg font-bold bg-blue-600 text-white">⚡ Danh sách máy chủ (15 giây)</button>
                   <button id="drive-mode-preview" onclick="setAdminDriveLoadMode('PREVIEW')" class="px-3 py-1.5 rounded-lg font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200">Google Drive (Xem trước)</button>
                   <button id="drive-mode-direct" onclick="setAdminDriveLoadMode('DIRECT')" class="px-3 py-1.5 rounded-lg font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200">Tải trực tiếp</button>
                 </div>
@@ -837,30 +852,30 @@ body:has(#modal-qr-login.flex) { overflow:hidden; }
                 <h3 class="text-base font-extrabold text-slate-900">Trạng thái hệ thống</h3>
                 <p class="text-xs text-slate-500">Tình trạng kết nối và đồng bộ dữ liệu</p>
               </div>
-              <span class="px-2.5 py-1 rounded-full text-[11px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
-                ● Hệ thống hoạt động tốt
+              <span id="sys-overall-state" class="px-2.5 py-1 rounded-full text-[11px] font-bold bg-sky-50 text-sky-700 border border-sky-200">
+                ● Chưa cấu hình đồng bộ
               </span>
             </div>
 
             <div class="divide-y divide-slate-100 text-xs">
               <div class="py-2.5 flex items-center justify-between">
                 <span class="font-semibold text-slate-700 flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-emerald-500"></span>Kết nối Google Drive</span>
-                <span class="font-bold text-emerald-600">Thành công</span>
-                <span class="text-slate-400" id="sys-drive-time">Cập nhật: 16:03</span>
+                <span class="font-bold text-slate-600">Xem theo quyền chia sẻ</span>
+                <span class="text-slate-400" id="sys-drive-time">Chưa tải từ máy chủ</span>
               </div>
               <div class="py-2.5 flex items-center justify-between">
                 <span class="font-semibold text-slate-700 flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-emerald-500"></span>Đồng bộ văn kiện</span>
-                <span class="font-bold text-emerald-600">Đã hoàn tất</span>
+                <span id="sys-doc-sync-state" class="font-bold text-slate-600">Chưa kết nối</span>
                 <span class="text-slate-400" id="sys-doc-count">4 tài liệu</span>
               </div>
               <div class="py-2.5 flex items-center justify-between">
                 <span class="font-semibold text-slate-700 flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-emerald-500"></span>Dịch vụ QR / Điểm danh</span>
-                <span class="font-bold text-emerald-600">Đang hoạt động</span>
+                <span class="font-bold text-slate-600">Lưu trên thiết bị</span>
                 <span class="text-slate-400" id="sys-qr-ready">Sẵn sàng</span>
               </div>
               <div class="py-2.5 flex items-center justify-between">
                 <span class="font-semibold text-slate-700 flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-emerald-500"></span>Cơ sở dữ liệu (Appwrite + CF)</span>
-                <span class="font-bold text-emerald-600">Bình thường</span>
+                <span id="sys-db-state" class="font-bold text-slate-600">Chưa xác nhận</span>
                 <span class="text-slate-400" id="sys-delegate-count">100/100 đại biểu</span>
               </div>
               <div class="py-2.5 flex items-center justify-between">
@@ -1174,7 +1189,7 @@ body:has(#modal-qr-login.flex) { overflow:hidden; }
             <div class="space-y-2 text-xs">
               <div>
                 <label class="block font-bold text-slate-700 mb-0.5">Tên miền Đại hội (Cloudflare Pages):</label>
-                <input id="cfg-cf-worker-url" type="text" value="https://daihoi-hothibi.pages.dev" oninput="syncGateQrUrlInput(this.value + '/?gate=checkin')" class="w-full px-2.5 py-1.5 rounded-lg border border-slate-300 font-mono text-[11px] bg-white" />
+                <input id="cfg-cf-worker-url" type="text" value="" placeholder="Địa chỉ API Worker văn kiện" class="w-full px-2.5 py-1.5 rounded-lg border border-slate-300 font-mono text-[11px] bg-white" />
               </div>
               <div>
                 <label class="block font-bold text-slate-700 mb-0.5">Cloudflare KV / Cache Binding:</label>
@@ -1187,7 +1202,7 @@ body:has(#modal-qr-login.flex) { overflow:hidden; }
           <div class="p-4 rounded-2xl bg-blue-50/50 border border-blue-200 space-y-3">
             <div class="flex items-center justify-between">
               <span class="px-2.5 py-0.5 rounded bg-blue-600 text-white text-xs font-extrabold">3. GOOGLE DRIVE</span>
-              <span class="text-xs font-bold text-emerald-700">● Đã đồng bộ</span>
+              <span class="text-xs font-bold text-emerald-700">${doc.cloudSynced ? "● Đã lưu máy chủ" : "○ Chỉ trên thiết bị"}</span>
             </div>
             <p class="text-xs text-slate-600">Lưu trữ tập trung toàn bộ tệp PDF Văn kiện Đại hội, Đề án nhân sự và Biên bản kiểm phiếu.</p>
             <div class="space-y-2 text-xs">
@@ -1256,11 +1271,11 @@ git push -u origin main</pre>
                 <span>Tạo kết nối Cơ sở dữ liệu Appwrite Cloud</span>
               </div>
               <ol class="list-decimal pl-4 space-y-1.5 text-slate-700">
-                <li>Truy cập <a href="https://cloud.appwrite.io" target="_blank" rel="noopener noreferrer" class="text-blue-600 underline font-semibold">cloud.appwrite.io</a> → Tạo Project mới tên <code class="font-mono font-bold">htb-congress-2026</code>.</li>
-                <li>Tại trang <strong>Overview</strong> → mục <strong>Integrations</strong> → bấm <strong>Add Platform → Web App</strong>: đặt tên <code class="font-mono">DaiHoiWeb</code> và nhập Hostname là <code class="font-mono font-bold text-rose-700">*.pages.dev</code> (hoặc tên miền riêng) để cho phép trình duyệt kết nối.</li>
-                <li>Vào mục <strong>Databases</strong> → Tạo Database <code class="font-mono font-bold">db_daihoi_htb</code> → Tạo Collection <code class="font-mono font-bold">ballots_2026</code>.</li>
-                <li>Trong Collection <code class="font-mono">ballots_2026</code>: mở tab <strong>Attributes</strong> tạo các trường <code class="font-mono">code</code> (String), <code class="font-mono">checkedIn</code> (Boolean), <code class="font-mono">votedBch</code> (Boolean), <code class="font-mono">bchSelectedIds</code> (Integer Array), <code class="font-mono">votedBiThu</code> (Boolean), <code class="font-mono">biThuSelectedIds</code> (Integer Array).</li>
-                <li>Mở tab <strong>Settings → Permissions</strong> của Collection → Thêm Role <strong>Any</strong> và tích chọn <strong>Create, Read, Update</strong> → Bấm <strong>Update</strong>. Dán Project ID vào ô cấu hình bên trên!</li>
+                <li>Tạo hoặc mở Project Appwrite và lấy Endpoint, Project ID thật.</li>
+                <li>Tạo database TablesDB riêng có ID <code>htb_documents</code>, bảng <code>catalogue</code>.</li>
+                <li>Tạo hai cột Text: <code>recordType</code> (20 ký tự) và <code>payload</code> (16.000 ký tự), Required; giữ quyền truy cập trống.</li>
+                <li>Tạo API Key với <code>rows.read</code>, <code>rows.write</code>; lưu dưới dạng Secret tại Worker, không đưa vào HTML hoặc GitHub.</li>
+                <li>Triển khai <code>worker/worker.mjs</code> theo <code>HUONG_DAN_DONG_BO.md</code>, sau đó nhập địa chỉ Worker trong khung Đồng bộ văn kiện.</li>
               </ol>
             </div>
 
@@ -1897,7 +1912,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
           if (Array.isArray(parsed.candidatesBch) && parsed.candidatesBch.length === 13) state.candidatesBch = parsed.candidatesBch;
           if (Array.isArray(parsed.candidatesBiThu) && parsed.candidatesBiThu.length > 0) state.candidatesBiThu = parsed.candidatesBiThu;
           if (Array.isArray(parsed.delegates) && parsed.delegates.length > 0) state.delegates = parsed.delegates;
-          if (Array.isArray(parsed.documents) && parsed.documents.length > 0) state.documents = parsed.documents;
+          if (Array.isArray(parsed.documents)) state.documents = parsed.documents;
           if (typeof parsed.currentVoterIndex === "number" && parsed.currentVoterIndex >= 0 && parsed.currentVoterIndex < state.delegates.length) {
             state.currentVoterIndex = parsed.currentVoterIndex;
           }
@@ -1950,7 +1965,8 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
           candidatesBch: state.candidatesBch,
           candidatesBiThu: state.candidatesBiThu,
           delegates: state.delegates,
-          documents: state.documents
+          documents: state.documents,
+          documentsSource: docsCloud.loaded ? "cloud" : (docsCloud.wasCloudCache ? "cloud" : "local")
         }));
       } catch (e) {}
     }
@@ -2224,6 +2240,8 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     }
 
     function logoutCurrentSession() {
+      docsCloud.token = "";
+      const syncKeyInput = document.getElementById("docs-sync-key"); if (syncKeyInput) syncKeyInput.value = "";
       state.sessionConfirmed = false;
       state.userRole = "delegate";
       state.mainSection = "overview";
@@ -2290,6 +2308,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
       if (sectionName === "overview") {
         renderVoterBar();
       } else if (sectionName === "documents") {
+        if (docsCloud.apiBase && Date.now() - docsCloud.lastSync > 15000) refreshCloudDocuments(false).catch(() => {});
         renderDocumentsList();
         renderActiveDocumentViewer();
       } else if (sectionName === "voting") {
@@ -2612,9 +2631,9 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
           <div onclick="selectDocument('${doc.id}')" class="cursor-pointer p-3.5 rounded-xl border transition ${isActive ? 'border-blue-600 bg-blue-50/70 shadow-xs' : 'border-slate-200 bg-white hover:border-blue-300'}">
             <div class="flex items-center justify-between gap-2 mb-1">
               <span class="px-2 py-0.5 rounded text-[10px] font-bold ${isActive ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-700'}">${catLabel}</span>
-              <span class="text-[11px] text-slate-400">${doc.size || '1.5 MB'}</span>
+              <span class="text-[11px] text-slate-400">${escapeDocText(doc.size) || '1.5 MB'}</span>
             </div>
-            <h4 class="text-xs sm:text-sm font-bold text-slate-900 leading-snug">${doc.title}</h4>
+            <h4 class="text-xs sm:text-sm font-bold text-slate-900 leading-snug">${escapeDocText(doc.title)}</h4>
           </div>
         `;
       }).join("");
@@ -2642,7 +2661,13 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
 
     function renderActiveDocumentViewer() {
       const doc = state.documents.find(d => d.id === state.activeDocumentId) || state.documents[0];
-      if (!doc) return;
+      if (!doc) {
+        document.getElementById("viewer-doc-title").textContent = "Chưa có văn kiện";
+        document.getElementById("viewer-fast-content").textContent = "Quản trị chưa công bố văn kiện trên máy chủ.";
+        document.getElementById("drive-preview-iframe").src = "about:blank";
+        document.getElementById("viewer-drive-external").href = "https://drive.google.com";
+        return;
+      }
       document.getElementById("viewer-doc-title").textContent = doc.title;
       document.getElementById("viewer-drive-external").href = `https://drive.google.com/file/d/${doc.driveFileId}/view`;
 
@@ -2679,35 +2704,6 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
       return match ? match[0] : (trimmed || "1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms");
     }
 
-    function addGoogleDriveDocument() {
-      const title = document.getElementById("new-doc-title").value.trim() || `${state.documents.length + 1}. Văn kiện bổ sung`;
-      const cat = document.getElementById("new-doc-category").value;
-      const size = document.getElementById("new-doc-size").value.trim() || "1.2 MB";
-      const fileId = extractGoogleDriveFileId(document.getElementById("new-doc-drive-url").value);
-      const summary = document.getElementById("new-doc-summary").value.trim() || "Văn kiện đồng bộ từ Google Drive.";
-
-      const nowStr = new Date().toLocaleTimeString("vi-VN", { hour: "2-digit", minute: "2-digit" });
-      const newDoc = {
-        id: "doc-" + Date.now(),
-        title,
-        category: cat,
-        driveFileId: fileId,
-        driveUrl: `https://drive.google.com/file/d/${fileId}/preview`,
-        updatedAt: `22/10/2026 ${nowStr}`,
-        size,
-        summaryHtml: `<div class="space-y-2"><p class="font-bold text-slate-900">${title}</p><p>${summary}</p></div>`
-      };
-
-      state.documents.push(newDoc);
-      state.activeDocumentId = newDoc.id;
-      saveState();
-      renderDocumentsList();
-      renderActiveDocumentViewer();
-      renderAdminDriveAndQrSection();
-      renderVoterBar();
-      closeDriveConfigModal();
-      showToast("Đã thêm văn kiện Google Drive mới!", "success");
-    }
 
     // =========================================================================
     // 6. VOTING SECTION (TAB 1 BCH & TAB 2 BÍ THƯ)
@@ -3039,14 +3035,14 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
               <td class="py-2.5 px-2 font-bold text-slate-900">
                 <div class="flex items-center gap-2">
                   <span class="px-1.5 py-0.5 rounded bg-red-600 text-white text-[9px] font-extrabold">PDF</span>
-                  <span class="truncate max-w-[210px] sm:max-w-xs">${doc.title}</span>
+                  <span class="truncate max-w-[210px] sm:max-w-xs">${escapeDocText(doc.title)}</span>
                 </div>
               </td>
               <td class="py-2.5 px-2">${catBadge}</td>
-              <td class="py-2.5 px-2 text-slate-500">${doc.updatedAt || '20/10/2026 09:15'}</td>
-              <td class="py-2.5 px-2 text-slate-500">${doc.size || '1.5 MB'}</td>
+              <td class="py-2.5 px-2 text-slate-500">${escapeDocText(doc.updatedAt) || '20/10/2026 09:15'}</td>
+              <td class="py-2.5 px-2 text-slate-500">${escapeDocText(doc.size) || '1.5 MB'}</td>
               <td class="py-2.5 px-2">
-                <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700">● Đã đồng bộ</span>
+                <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700">${doc.cloudSynced ? "● Đã lưu máy chủ" : "○ Chỉ trên thiết bị"}</span>
               </td>
               <td class="py-2.5 px-2 text-right">
                 <div class="inline-flex items-center gap-1">
@@ -3234,11 +3230,6 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
       document.getElementById("admin-drive-folder-link").value = `https://drive.google.com/drive/folders/${idVal}`;
     }
 
-    function testGoogleDriveConnection() {
-      const nowStr = new Date().toLocaleTimeString("vi-VN", { hour: "2-digit", minute: "2-digit" });
-      document.getElementById("sys-drive-time").textContent = `Cập nhật: ${nowStr}`;
-      showToast("Kết nối thư mục Google Drive thành công!", "success");
-    }
 
     function copyDriveFolderLink() {
       const val = document.getElementById("admin-drive-folder-link").value;
@@ -3259,31 +3250,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
       if (mode === "DIRECT" && btnDir) btnDir.className = "px-3 py-1.5 rounded-lg font-bold bg-blue-600 text-white";
     }
 
-    function saveAdminDriveSettings() {
-      state.config.driveFolderId = document.getElementById("admin-drive-folder-id").value.trim();
-      saveState();
-      showToast("Đã lưu cấu hình Google Drive!", "success");
-    }
 
-    function syncGoogleDriveDocsNow() {
-      const nowStr = new Date().toLocaleTimeString("vi-VN", { hour: "2-digit", minute: "2-digit" });
-      document.getElementById("sys-drive-time").textContent = `Cập nhật: ${nowStr}`;
-      renderAdminDriveAndQrSection();
-      showToast(`Đã đồng bộ ${state.documents.length} văn kiện từ Google Drive!`, "success");
-    }
-
-    function deleteDriveDocument(docId) {
-      if (state.documents.length <= 1) {
-        showToast("Cần giữ lại ít nhất 1 văn kiện!", "warning");
-        return;
-      }
-      state.documents = state.documents.filter(d => d.id !== docId);
-      if (state.activeDocumentId === docId) state.activeDocumentId = state.documents[0].id;
-      saveState();
-      renderAdminDriveAndQrSection();
-      renderVoterBar();
-      showToast("Đã xóa văn kiện khỏi danh sách.", "info");
-    }
 
     function copyAdminQrLink() {
       const val = document.getElementById("admin-qr-link-input").value;
@@ -3762,14 +3729,6 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     }
 
     // Cloud storage ping & export
-    function testAllCloudConnections() {
-      const box = document.getElementById("cloud-ping-status-box");
-      if (box) {
-        box.classList.remove("hidden");
-        box.innerHTML = `<strong>✓ Kết nối hoàn tất:</strong> Appwrite Cloud (14ms) • Cloudflare Edge Worker (9ms) • Google Drive Folder (${state.documents.length} tài liệu sẵn sàng).`;
-      }
-      showToast("Kết nối Appwrite + Cloudflare + Google Drive hoạt động tốt!", "success");
-    }
 
     function exportCloudConfigJson() {
       const payload = {
@@ -3809,6 +3768,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     });
 
     window.addEventListener("DOMContentLoaded", () => {
+      capturePreviousDocuments();
       loadSavedState();
       if (!state.sessionConfirmed) {
         syncDraftWithCurrentVoter();
@@ -3830,5 +3790,202 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
       }
     });
   </script>
+<script>
+// Document synchronization only. Attendance and ballot storage remain unchanged.
+const docsCloud = { apiBase: 'https://htb-van-kien-api.thpthothibi2.workers.dev', token: '', loaded: false, busy: false, reading: null, lastSync: 0, status: 'Chưa cấu hình đồng bộ', pending: [], wasCloudCache: false, error: '' };
+const DOCS_PENDING_KEY = 'htb_pending_documents_v1';
+function escapeDocText(value) {
+  return String(value ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
+function validatedDocsBase(value) {
+  const url = new URL(String(value).trim());
+  if (url.protocol !== 'https:' || url.username || url.password || url.search || url.hash || url.pathname !== '/') throw new Error('Nhập địa chỉ gốc HTTPS của Worker, không kèm /api hay đường dẫn.');
+  return url.origin;
+}
+function updateDocsSyncStatus(message, failed = false) {
+  docsCloud.status = message; docsCloud.error = failed ? message : '';
+  for (const id of ['docs-sync-status', 'sys-doc-sync-state']) {
+    const el = document.getElementById(id); if (el) { el.textContent = message; el.style.color = failed ? '#be123c' : '#0369a1'; }
+  }
+  const badge = document.getElementById('sys-overall-state'); if (badge) badge.textContent = docsCloud.loaded && !failed ? '● Văn kiện đã kết nối' : '● ' + message;
+  const db = document.getElementById('sys-db-state'); if (db) db.textContent = docsCloud.loaded && !failed ? 'Văn kiện: đã kết nối' : 'Văn kiện: chưa xác nhận';
+}
+async function docsRequest(path, options = {}, apiBase = docsCloud.apiBase) {
+  if (!apiBase) throw new Error('Chưa cấu hình địa chỉ Worker đồng bộ văn kiện.');
+  const headers = new Headers(options.headers || {});
+  if (options.body) headers.set('Content-Type', 'application/json');
+  if (options.admin) {
+    if (!docsCloud.token) throw new Error('Nhập khóa quản trị đồng bộ rồi bấm Kết nối.');
+    headers.set('Authorization', 'Bearer ' + docsCloud.token);
+  }
+  let response;
+  try { response = await fetch(apiBase + '/api' + path, { method: options.method || 'GET', headers, body: options.body ? JSON.stringify(options.body) : undefined, signal: AbortSignal.timeout(20000), cache: 'no-store', credentials: 'omit', redirect: 'error' }); }
+  catch (_) { throw new Error('Không gọi được Worker. Kiểm tra địa chỉ API, mạng và ALLOWED_ORIGINS.'); }
+  let data; try { data = await response.json(); } catch (_) { throw new Error('API không trả JSON. Kiểm tra đã triển khai đúng worker.mjs.'); }
+  if (!response.ok) { if (response.status === 401) docsCloud.token = ''; throw new Error(data.error || 'Không đồng bộ được văn kiện.'); }
+  return data;
+}
+function asCloudDocument(doc) {
+  if (!doc || !/^[a-zA-Z0-9][a-zA-Z0-9._-]{0,35}$/.test(doc.id) || !/^[\w-]{10,200}$/.test(doc.driveFileId) || !['BAO_CAO', 'NHAN_SU', 'QUY_CHE', 'NOI_QUY'].includes(doc.category) || typeof doc.title !== 'string') throw new Error('Dữ liệu văn kiện máy chủ không hợp lệ.');
+  return { id: doc.id, title: doc.title, category: doc.category, driveFileId: doc.driveFileId, size: doc.size || '', summary: String(doc.summary || ''), driveUrl: 'https://drive.google.com/file/d/' + doc.driveFileId + '/preview', updatedAt: doc.updatedAt ? new Date(doc.updatedAt).toLocaleString('vi-VN') : '', cloudSynced: true,
+    summaryHtml: '<div class="space-y-2"><p class="font-bold text-slate-900">' + escapeDocText(doc.title) + '</p><p style="white-space:pre-wrap">' + escapeDocText(doc.summary || '') + '</p></div>' };
+}
+function rerenderSyncedDocuments() {
+  renderDocumentsList(); renderActiveDocumentViewer(); renderAdminDriveAndQrSection(); renderVoterBar();
+  const folder = document.getElementById('admin-drive-folder-id'); if (folder && document.activeElement !== folder) { folder.value = state.config.driveFolderId || ''; syncDriveFolderLinkFromId(); }
+}
+async function refreshCloudDocuments(announce = false, fresh = false) {
+  if (!docsCloud.apiBase) { if (announce) showToast('Chưa cấu hình API đồng bộ văn kiện.', 'warning'); return; }
+  if (docsCloud.reading) return docsCloud.reading;
+  docsCloud.reading = (async () => {
+    try {
+      const data = await docsRequest('/documents' + (fresh ? '?fresh=1' : ''));
+      if (!Array.isArray(data.documents)) throw new Error('API không trả danh sách văn kiện.');
+      const documents = data.documents.map(asCloudDocument);
+      state.documents = documents;
+      if (!documents.some(d => d.id === state.activeDocumentId)) state.activeDocumentId = documents[0]?.id || null;
+      state.config.driveFolderId = data.settings?.driveFolderId || '';
+      state.config.driveLoadMode = data.settings?.driveLoadMode || 'PREVIEW';
+      docsCloud.loaded = true; docsCloud.lastSync = Date.now(); saveState(); rerenderSyncedDocuments();
+      updateDocsSyncStatus('Đã đồng bộ ' + documents.length + ' văn kiện');
+      document.getElementById('sys-drive-time').textContent = 'Cập nhật: ' + new Date().toLocaleTimeString('vi-VN');
+      if (announce) showToast('Đã tải danh sách văn kiện chung từ Appwrite.', 'success');
+    } catch (e) { updateDocsSyncStatus(e.message, true); if (announce) showToast(e.message, 'error'); throw e; }
+    finally { docsCloud.reading = null; }
+  })();
+  return docsCloud.reading;
+}
+async function connectDocsCloud() {
+  const input = document.getElementById('docs-sync-api'); const secret = document.getElementById('docs-sync-key');
+  try {
+    const base = validatedDocsBase(input.value);
+    const candidate = secret.value.trim();
+    if (candidate) docsCloud.token = candidate;
+    // Never send an old token to a newly entered endpoint.
+    if (base !== docsCloud.apiBase && !candidate) docsCloud.token = '';
+    if (!docsCloud.token) throw new Error('Nhập khóa quản trị đồng bộ đã đặt trong Worker.');
+    await docsRequest('/admin/verify', { method: 'POST', admin: true }, base);
+    docsCloud.apiBase = base; state.config.documentsApiBase = base; saveState(); secret.value = '';
+    await refreshCloudDocuments(true, true);
+    showToast('Kết nối thành công. Tải docs-config.json và đưa lên GitHub để các máy khác tự kết nối.', 'success');
+  } catch (e) { updateDocsSyncStatus(e.message, true); showToast(e.message, 'error'); }
+}
+function downloadDocsPublicConfig() {
+  try {
+    const base = validatedDocsBase(document.getElementById('docs-sync-api').value || docsCloud.apiBase);
+    const blob = new Blob([JSON.stringify({ apiBase: base }, null, 2)], { type: 'application/json' });
+    const a = document.createElement('a'), url = URL.createObjectURL(blob); a.href = url; a.download = 'docs-config.json'; a.click(); setTimeout(() => URL.revokeObjectURL(url), 1000);
+    showToast('Đưa docs-config.json lên GitHub cùng thư mục index.html. File này không chứa khóa quản trị.', 'info');
+  } catch (e) { showToast(e.message, 'error'); }
+}
+function requireDocsAdmin() {
+  if (state.userRole !== 'admin' || !docsCloud.apiBase || !docsCloud.token) throw new Error('Cần đăng nhập Admin và kết nối bằng khóa quản trị đồng bộ trước khi lưu.');
+}
+function parseDriveFile(input) {
+  const raw = String(input || '').trim();
+  if (/^[\w-]{10,200}$/.test(raw)) return raw;
+  try { const u = new URL(raw); if (u.hostname !== 'drive.google.com' || u.protocol !== 'https:') throw new Error(); const id = u.pathname.match(/^\/file\/d\/([\w-]+)/)?.[1] || u.searchParams.get('id'); if (!/^[\w-]{10,200}$/.test(id || '')) throw new Error(); return id; }
+  catch (_) { throw new Error('Dán liên kết file PDF Google Drive (không dùng liên kết thư mục).'); }
+}
+async function addGoogleDriveDocument() {
+  if (docsCloud.busy) return;
+  try {
+    requireDocsAdmin();
+    const data = { title: document.getElementById('new-doc-title').value.trim(), category: document.getElementById('new-doc-category').value, size: document.getElementById('new-doc-size').value.trim(), driveFileId: parseDriveFile(document.getElementById('new-doc-drive-url').value), summary: document.getElementById('new-doc-summary').value.trim() };
+    if (!data.title) throw new Error('Nhập tên văn kiện.');
+    docsCloud.busy = true;
+    const id = 'doc-' + crypto.randomUUID().replaceAll('-', '').slice(0, 28);
+    await docsRequest('/documents/' + id, { method: 'PUT', body: data, admin: true });
+    state.activeDocumentId = id; closeDriveConfigModal();
+    showToast('Đã lưu văn kiện lên máy chủ.', 'success');
+    try { await refreshCloudDocuments(false, true); } catch (_) { showToast('Đã lưu nhưng chưa tải lại được danh sách. Bấm Đồng bộ ngay để tải lại.', 'warning'); }
+  } catch (e) { showToast(e.message, 'error'); } finally { docsCloud.busy = false; }
+}
+async function deleteDriveDocument(id) {
+  if (docsCloud.busy) return;
+  try {
+    requireDocsAdmin();
+    if (!confirm('Xóa văn kiện khỏi danh sách chung cho tất cả các máy? File PDF trên Drive vẫn được giữ.')) return;
+    docsCloud.busy = true; await docsRequest('/documents/' + encodeURIComponent(id), { method: 'DELETE', admin: true });
+    showToast('Đã xóa khỏi danh sách chung.', 'success');
+    try { await refreshCloudDocuments(false, true); } catch (_) { showToast('Đã xóa trên máy chủ. Bấm Đồng bộ ngay để tải lại danh sách.', 'warning'); }
+  } catch (e) { showToast(e.message, 'error'); } finally { docsCloud.busy = false; }
+}
+async function saveAdminDriveSettings() {
+  try {
+    requireDocsAdmin(); const data = { driveFolderId: document.getElementById('admin-drive-folder-id').value.trim(), driveLoadMode: state.config.driveLoadMode };
+    await docsRequest('/settings', { method: 'PUT', body: data, admin: true });
+    await refreshCloudDocuments(false, true); showToast('Đã lưu cấu hình Drive dùng chung.', 'success');
+  } catch (e) { showToast(e.message, 'error'); }
+}
+async function syncGoogleDriveDocsNow() { try { await refreshCloudDocuments(true, true); } catch (_) {} }
+async function testGoogleDriveConnection() {
+  // Cross-origin Google Drive permissions cannot be verified reliably from this page.
+  const id = document.getElementById('admin-drive-folder-id').value.trim();
+  if (!/^[\w-]{10,200}$/.test(id)) { showToast('Nhập mã thư mục Drive hợp lệ.', 'warning'); return; }
+  window.open('https://drive.google.com/drive/folders/' + id, '_blank', 'noopener,noreferrer');
+  showToast('Đã mở thư mục Drive. Kiểm tra quyền xem bằng cửa sổ ẩn danh; website không tự xác minh quyền Google Drive.', 'info');
+}
+async function testAllCloudConnections() {
+  const box = document.getElementById('cloud-ping-status-box');
+  try {
+    const result = await docsRequest('/health');
+    if (!result.ok || result.service !== 'htb-documents-sync') throw new Error('API chưa xác nhận kết nối.');
+    if (box) { box.classList.remove('hidden'); box.textContent = 'Đã gọi Worker và đọc Appwrite thành công: ' + result.count + ' văn kiện. Chưa kiểm tra quyền PDF Google Drive. Điểm danh và bầu cử vẫn lưu trên thiết bị.'; }
+    showToast('Worker và Appwrite đã phản hồi thật.', 'success');
+  } catch (e) { if (box) { box.classList.remove('hidden'); box.textContent = e.message; } showToast(e.message, 'error'); }
+}
+async function publishPreviousDocuments() {
+  if (docsCloud.busy) return;
+  let published = 0;
+  try {
+    requireDocsAdmin();
+    const list = docsCloud.pending;
+    if (!list.length) throw new Error('Máy này không có danh sách cũ cần chuyển. Mở bằng đúng trình duyệt đã thêm văn kiện trước đây.');
+    if (!confirm('Chuyển ' + list.length + ' văn kiện từ trình duyệt này lên danh sách chung? Các văn kiện đã có cùng mã sẽ được cập nhật.')) return;
+    docsCloud.busy = true;
+    const remaining = [...list];
+    while (remaining.length) {
+      const doc = remaining[0];
+      if (!/^[a-zA-Z0-9][a-zA-Z0-9._-]{0,35}$/.test(doc.id)) throw new Error('Mã văn kiện cũ không hợp lệ. Hãy thêm lại tài liệu này bằng liên kết Drive.');
+      const summary = typeof doc.summary === 'string' ? doc.summary : (() => { const t = document.createElement('div'); t.innerHTML = doc.summaryHtml || ''; return t.textContent || ''; })();
+      await docsRequest('/documents/' + doc.id, { method: 'PUT', admin: true, body: { title: doc.title, category: doc.category, driveFileId: parseDriveFile(doc.driveFileId), size: doc.size || '', summary } });
+      remaining.shift(); published++; docsCloud.pending = [...remaining]; localStorage.setItem(DOCS_PENDING_KEY, JSON.stringify(remaining));
+    }
+    await refreshCloudDocuments(false, true); showToast('Đã chuyển ' + published + ' văn kiện lên danh sách chung.', 'success');
+  } catch (e) { showToast((published ? 'Đã chuyển ' + published + ' tài liệu. ' : '') + e.message, 'error'); }
+  finally { docsCloud.busy = false; }
+}
+function capturePreviousDocuments() {
+  try {
+    const saved = JSON.parse(localStorage.getItem('htb_election_state_v2') || 'null');
+    docsCloud.wasCloudCache = saved?.documentsSource === 'cloud';
+    const previous = JSON.parse(localStorage.getItem(DOCS_PENDING_KEY) || 'null');
+    if (Array.isArray(previous)) docsCloud.pending = previous;
+    else if (saved && !docsCloud.wasCloudCache && Array.isArray(saved.documents)) {
+      docsCloud.pending = saved.documents.filter(d => !INITIAL_DRIVE_DOCUMENTS.some(sample => sample.id === d.id));
+      localStorage.setItem(DOCS_PENDING_KEY, JSON.stringify(docsCloud.pending));
+    }
+  } catch (_) { /* Keep the existing catalogue if local storage is unavailable. */ }
+}
+async function initDocumentsSync() {
+  try {
+    if (state.config.documentsApiBase) docsCloud.apiBase = validatedDocsBase(state.config.documentsApiBase);
+    if (/^https?:$/.test(location.protocol)) {
+      try {
+        const r = await fetch(new URL('./docs-config.json', document.baseURI), { cache: 'no-store', signal: AbortSignal.timeout(8000) });
+        if (r.ok) { const data = await r.json(); if (data.apiBase) docsCloud.apiBase = validatedDocsBase(data.apiBase); }
+      } catch (_) { /* A missing config does not falsely indicate a connection. */ }
+    }
+    document.getElementById('docs-sync-api').value = docsCloud.apiBase;
+    if (docsCloud.apiBase) await refreshCloudDocuments(false, true);
+    else updateDocsSyncStatus('Chưa cấu hình đồng bộ — dữ liệu trên máy này');
+  } catch (e) { updateDocsSyncStatus(e.message, true); }
+}
+window.addEventListener('DOMContentLoaded', initDocumentsSync);
+setInterval(() => { if (!document.hidden && docsCloud.apiBase && !docsCloud.busy) refreshCloudDocuments(false).catch(() => {}); }, 30000);
+window.addEventListener('focus', () => { if (docsCloud.apiBase && Date.now() - docsCloud.lastSync > 15000) refreshCloudDocuments(false).catch(() => {}); });
+
+</script>
 </body>
 </html>
