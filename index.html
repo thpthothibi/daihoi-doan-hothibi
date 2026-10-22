@@ -903,7 +903,7 @@ body:has(#modal-qr-login.flex) { overflow:hidden; }
                 <div>
                   <label class="block text-[11px] font-bold text-slate-700 mb-1">Link cài trong Mã QR mở Cổng Điểm Danh:</label>
                   <div class="flex items-center gap-1">
-                    <input id="admin-qr-link-input" type="text" value="https://daihoi-hothibi.pages.dev/?gate=checkin" oninput="syncGateQrUrlInput(this.value)" class="w-full px-2.5 py-1.5 rounded-lg bg-white border border-slate-300 font-mono text-[11px] text-slate-800" />
+                    <input id="admin-qr-link-input" type="text" value="https://thpthothibi.github.io/daihoi-doan-hothibi/?gate=checkin" oninput="syncGateQrUrlInput(this.value)" class="w-full px-2.5 py-1.5 rounded-lg bg-white border border-slate-300 font-mono text-[11px] text-slate-800" />
                     <button onclick="copyAdminQrLink()" class="px-2.5 py-1.5 rounded-lg bg-white border border-slate-300 hover:bg-slate-100 text-xs font-bold" title="Sao chép link">📋</button>
                   </div>
                 </div>
@@ -1344,7 +1344,7 @@ git push -u origin main</pre>
             <div>
               <div class="text-[11px] text-slate-400 mb-1">Link nhúng trong mã QR Cổng Điểm Danh Đại Hội:</div>
               <div id="gate-qr-url-box" class="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 font-mono text-[11px] text-sky-300 truncate text-center">
-                https://daihoi-hothibi.pages.dev/?gate=checkin
+                https://thpthothibi.github.io/daihoi-doan-hothibi/?gate=checkin
               </div>
             </div>
 
@@ -1719,12 +1719,12 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
 
     function normalizeGateQrUrl(value) {
       try {
-        const fallback = /^https?:$/.test(location.protocol) ? location.href : "https://daihoi-hothibi.pages.dev/";
+        const fallback = /^https?:$/.test(location.protocol) ? location.href : "https://thpthothibi.github.io/daihoi-doan-hothibi/";
         const url = new URL((value || fallback).trim(), fallback);
         if (!/^https?:$/.test(url.protocol)) throw new Error("Invalid protocol");
         url.searchParams.set("gate", "checkin"); url.searchParams.delete("db"); url.hash = "";
         return url.href;
-      } catch (_) { return "https://daihoi-hothibi.pages.dev/?gate=checkin"; }
+      } catch (_) { return "https://thpthothibi.github.io/daihoi-doan-hothibi/?gate=checkin"; }
     }
     function makeGateQr(url) {
       const qr = qrcode(0, "M"); qr.addData(url); qr.make(); return qr;
@@ -1860,7 +1860,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
       config: {
         adminPassword: ADMIN_PASSWORD_DEFAULT,
         bchAccountPassword: BCH_ACCOUNT_PASSWORD_DEFAULT,
-        gateQrUrl: "https://daihoi-hothibi.pages.dev/?gate=checkin",
+        gateQrUrl: "https://thpthothibi.github.io/daihoi-doan-hothibi/?gate=checkin",
         gateQrLabel: "CỔNG ĐIỂM DANH",
         biThuPassword: "HTB2026",
         biThuUnlockTime: "09:30",
@@ -1890,7 +1890,9 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
           if (parsed.config) Object.assign(state.config, parsed.config);
           if (!state.config.adminPassword) state.config.adminPassword = ADMIN_PASSWORD_DEFAULT;
           if (!state.config.bchAccountPassword) state.config.bchAccountPassword = BCH_ACCOUNT_PASSWORD_DEFAULT;
-          if (!state.config.gateQrUrl) state.config.gateQrUrl = "https://daihoi-hothibi.pages.dev/?gate=checkin";
+          if (!state.config.gateQrUrl || ["daihoi-hothibi.pages.dev", "daihoi-doan-hothibi.pages.dev"].some(host => {
+            try { return new URL(state.config.gateQrUrl).hostname === host; } catch (_) { return false; }
+          })) state.config.gateQrUrl = "https://thpthothibi.github.io/daihoi-doan-hothibi/?gate=checkin";
           if (!state.config.gateQrLabel) state.config.gateQrLabel = "CỔNG ĐIỂM DANH";
           if (Array.isArray(parsed.candidatesBch) && parsed.candidatesBch.length === 13) state.candidatesBch = parsed.candidatesBch;
           if (Array.isArray(parsed.candidatesBiThu) && parsed.candidatesBiThu.length > 0) state.candidatesBiThu = parsed.candidatesBiThu;
