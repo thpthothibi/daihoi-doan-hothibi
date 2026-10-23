@@ -172,6 +172,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     // 3. ROLE PERMISSIONS, BCH & ADMIN LOGIN (đã được thiết lập trên máy chủ), CHANGE PASS & NAV
     // =========================================================================
     function renderRolePermissions() {
+      document.body.dataset.userRole = state.userRole;
       const isAdmin = state.userRole === "admin";
       const isBch = state.userRole === "bch";
       const isStaff = isAdmin || isBch;

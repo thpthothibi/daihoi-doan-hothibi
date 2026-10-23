@@ -84,6 +84,23 @@ body:has(#modal-qr-login.flex) { overflow:hidden; }
 #gate-qr-zoom-url { padding:10px 12px; border-radius:12px; background:#f0f9ff; color:#0369a1; text-align:center; font-size:12px; overflow-wrap:anywhere; }
 @media (max-width:480px) { #gate-qr-zoom { padding:16px; } #gate-qr-zoom h2 { font-size:17px; } }
 </style>
+<style id="mobile-account-layout">
+.drawer-scroll-content { min-height:0; overflow-y:auto; flex:1; overscroll-behavior:contain; }
+#drawer-footer { flex-shrink:0; padding-bottom:max(16px, env(safe-area-inset-bottom)); }
+@media (max-width:639px) {
+  #site-header-row { flex-direction:column; align-items:stretch; }
+  #site-header-brand { width:100%; }
+  #site-header-brand h1 { white-space:normal; overflow:visible; text-overflow:clip; line-height:1.4; overflow-wrap:anywhere; }
+  #site-header-actions { width:100%; min-width:0; }
+  #btn-header-change-pass, #btn-header-logout, #btn-header-admin { display:none; }
+  body[data-user-role="admin"] #site-header-actions, body[data-user-role="bch"] #site-header-actions { display:none; }
+  #btn-open-qr-login { width:100%; justify-content:flex-start; text-align:left; }
+  #current-voter-label, #drawer-voter-name { white-space:normal; overflow:visible; text-overflow:clip; max-width:none; overflow-wrap:anywhere; }
+  body[data-user-role="delegate"] #drawer-checkin-row, body[data-user-role="delegate"] #drawer-btn-admin-login { display:none; }
+  body[data-user-role="delegate"] #drawer-account-actions { grid-template-columns:minmax(0,1fr); }
+  #drawer-admin-card > div { flex-wrap:wrap; }
+}
+</style>
 </head>
 <body class="min-h-screen flex flex-col">
 
@@ -92,9 +109,9 @@ body:has(#modal-qr-login.flex) { overflow:hidden; }
   <!-- ========================================== -->
   <header class="bg-gradient-to-r from-sky-900 via-blue-800 to-indigo-900 text-white shadow-md sticky top-0 z-30">
     <div class="max-w-7xl mx-auto px-2.5 sm:px-6">
-      <div class="flex items-center justify-between py-2 gap-2">
+      <div id="site-header-row" class="flex items-center justify-between py-2 gap-2">
         <!-- Left: 3-Bar Hamburger Menu Button + School Logo + Compact Mobile Brand -->
-        <div class="flex items-center gap-2 min-w-0">
+        <div id="site-header-brand" class="flex items-center gap-2 min-w-0">
           <button id="btn-toggle-drawer" onclick="toggleMobileDrawer()" aria-label="Mở menu" class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-white/15 hover:bg-white/25 active:scale-95 flex items-center justify-center border border-white/25 transition shrink-0">
             <svg class="w-5 h-5 sm:w-6 sm:h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M4 6h16M4 12h16M4 18h16"/>
@@ -113,14 +130,14 @@ body:has(#modal-qr-login.flex) { overflow:hidden; }
             </div>
             <!-- Compact title on mobile, full title on larger screens -->
             <h1 class="text-xs sm:text-base font-extrabold tracking-tight truncate mt-0.5">
-              <span class="sm:hidden">ĐẠI HỘI BCH ĐOÀN THPT HỒ THỊ BI</span>
+              <span class="sm:hidden">ĐẠI HỘI BCH ĐOÀN TRƯỜNG THPT HỒ THỊ BI</span>
               <span class="hidden sm:inline">ĐẠI HỘI BCH ĐOÀN TRƯỜNG THPT HỒ THỊ BI</span>
             </h1>
           </div>
         </div>
 
         <!-- Right: Active Delegate QR Badge (Hidden in Admin mode) + Admin + Logout -->
-        <div class="flex items-center gap-1.5 shrink-0">
+        <div id="site-header-actions" class="flex items-center gap-1.5 shrink-0">
           <div class="hidden lg:flex flex-col items-end text-[11px] bg-white/10 px-2.5 py-1 rounded-lg border border-white/15">
             <span class="text-sky-200">Giờ Đại hội</span>
             <span id="live-clock" class="font-bold text-white">08:30:00</span>
@@ -156,7 +173,7 @@ body:has(#modal-qr-login.flex) { overflow:hidden; }
   <div id="mobile-drawer-overlay" onclick="closeMobileDrawer()" class="fixed inset-0 bg-slate-950/60 backdrop-blur-xs z-40 hidden drawer-backdrop"></div>
 
   <aside id="mobile-drawer" class="fixed top-0 left-0 bottom-0 w-72 max-w-[85vw] bg-slate-900 text-white z-50 shadow-2xl transform -translate-x-full drawer-panel flex flex-col justify-between">
-    <div>
+    <div class="drawer-scroll-content">
       <!-- Drawer Header with School Logo -->
       <div class="p-4 border-b border-slate-800 flex items-center justify-between bg-slate-950/50">
         <div class="flex items-center gap-2.5">
@@ -191,8 +208,8 @@ body:has(#modal-qr-login.flex) { overflow:hidden; }
             <div id="drawer-account-title" class="text-xs font-extrabold text-white truncate mt-0.5">Ban Tổ Chức Đại Hội</div>
             <div id="drawer-account-desc" class="text-[11px] text-amber-200/80">Toàn quyền điều hành hệ thống</div>
           </div>
-          <button onclick="closeMobileDrawer(); openChangePasswordModal();" class="px-2.5 py-1.5 rounded-lg bg-indigo-500 hover:bg-indigo-400 text-white font-bold text-[11px] shrink-0">
-            🔑 Đổi MK
+          <button id="drawer-btn-change-pass" onclick="closeMobileDrawer(); openChangePasswordModal();" class="px-2.5 py-1.5 rounded-lg bg-indigo-500 hover:bg-indigo-400 text-white font-bold text-[11px] shrink-0">
+            🔑 Đổi mật khẩu
           </button>
         </div>
       </div>
@@ -247,16 +264,16 @@ body:has(#modal-qr-login.flex) { overflow:hidden; }
     </div>
 
     <!-- Drawer Footer -->
-    <div class="p-4 border-t border-slate-800 text-[11px] text-slate-400 space-y-2.5">
-      <div class="flex items-center justify-between">
+    <div id="drawer-footer" class="p-4 border-t border-slate-800 text-[11px] text-slate-400 space-y-2.5">
+      <div id="drawer-checkin-row" class="flex items-center justify-between">
         <span>Đã điểm danh QR:</span>
         <span id="drawer-checkin-stat" class="text-white font-bold">— / — ĐB</span>
       </div>
-      <div class="grid grid-cols-2 gap-2 pt-1">
+      <div id="drawer-account-actions" class="grid grid-cols-2 gap-2 pt-1">
         <button id="drawer-btn-admin-login" onclick="closeMobileDrawer(); openAdminLoginModal();" class="py-2 px-2.5 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-extrabold text-xs transition text-center">
           🔐 Quản trị
         </button>
-        <button onclick="closeMobileDrawer(); logoutCurrentSession();" class="py-2 px-2.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white font-extrabold text-xs transition text-center">
+        <button id="drawer-btn-logout" onclick="closeMobileDrawer(); logoutCurrentSession();" class="py-2 px-2.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white font-extrabold text-xs transition text-center">
           🚪 Đăng xuất
         </button>
       </div>
@@ -1496,8 +1513,8 @@ body:has(#modal-qr-login.flex) { overflow:hidden; }
     <div id="gate-qr-zoom-url"></div>
   </dialog>
 
-  <script src="assets/page-core-1.js?v=2.1"></script>
-<script src="assets/page-core-2.js?v=2.1"></script>
-<script src="assets/election.js?v=2.1"></script>
+  <script src="assets/page-core-1.js?v=2.1.1"></script>
+<script src="assets/page-core-2.js?v=2.1.1"></script>
+<script src="assets/election.js?v=2.1.1"></script>
 </body>
 </html>
