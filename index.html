@@ -505,7 +505,7 @@ body:has(#modal-qr-login.flex) { overflow:hidden; }
             </div>
             <div class="flex items-center gap-2">
               <button onclick="resetBchAllSelected()" class="px-2.5 py-1 rounded-lg bg-white border border-slate-300 hover:bg-slate-100 text-slate-700 text-xs font-semibold transition">
-                Bỏ chọn tất cả
+                Chọn lại tất cả
               </button>
               <span id="bch-already-voted-banner" class="hidden px-2.5 py-1 rounded-lg bg-emerald-100 text-emerald-800 text-xs font-bold">
                 ✓ Đã nộp phiếu
@@ -513,7 +513,8 @@ body:has(#modal-qr-login.flex) { overflow:hidden; }
             </div>
           </div>
 
-          <!-- 13 Candidates Compact Grid -->
+          <p class="text-xs text-slate-600">Mặc định chọn tất cả. Bấm vào ứng viên để bỏ chọn; bấm lại để chọn lại.</p>
+          <!-- Candidates Compact Grid -->
           <div id="bch-candidates-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5"></div>
 
           <!-- Submit Footer -->
@@ -549,7 +550,7 @@ body:has(#modal-qr-login.flex) { overflow:hidden; }
               </div>
               <div class="flex items-center gap-2">
                 <button onclick="resetBiThuAllSelected()" class="px-2.5 py-1 rounded-lg bg-white border border-amber-300 hover:bg-amber-100 text-slate-800 text-xs font-semibold transition">
-                  Chọn lại mặc định
+                  Chọn lại tất cả
                 </button>
                 
               </div>
@@ -1513,8 +1514,8 @@ body:has(#modal-qr-login.flex) { overflow:hidden; }
     <div id="gate-qr-zoom-url"></div>
   </dialog>
 
-  <script src="assets/page-core-1.js?v=2.1.1"></script>
-<script src="assets/page-core-2.js?v=2.1.1"></script>
-<script src="assets/election.js?v=2.1.1"></script>
+  <script src="assets/page-core-1.js?v=2.1.2"></script>
+<script src="assets/page-core-2.js?v=2.1.2"></script>
+<script src="assets/election.js?v=2.1.2"></script>
 </body>
 </html>

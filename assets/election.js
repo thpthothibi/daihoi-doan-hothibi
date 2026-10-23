@@ -16,16 +16,23 @@ function loadSavedState(){
  try{const old=JSON.parse(localStorage.getItem('htb_election_state_v2')||'null');if(old){delete old.config?.adminPassword;delete old.config?.bchAccountPassword;delete old.config?.biThuPassword;old.userRole='delegate';old.sessionConfirmed=false;localStorage.setItem('htb_election_state_v2',JSON.stringify(old));}}catch{}
 }
 function saveState(){try{if(docsCloud.loaded)localStorage.setItem('htb_documents_cache_v2',JSON.stringify({documents:state.documents.map(d=>({id:d.id,title:d.title,category:d.category,driveFileId:d.driveFileId,size:d.size,summary:d.summary||'',updatedAt:d.updatedAt})),at:docsCloud.lastSync}));}catch{}}
-function syncDraftWithCurrentVoter(){state.bchDraftSelectedIds=new Set();state.biThuDraftSelectedIds=new Set();}
+function syncDraftWithCurrentVoter(){state.bchDraftSelectedIds=new Set();state.biThuDraftSelectedIds=new Set();election.draftKeys={};election.viewSignature='';}
+function initializeElectionDrafts(){
+ const voter=getCurrentVoter();election.draftKeys??={};
+ for(const [round,candidates,key,voted] of [['bch',state.candidatesBch,'bchDraftSelectedIds','votedBch'],['bithu',state.candidatesBiThu,'biThuDraftSelectedIds','votedBiThu']]){
+  const identity=JSON.stringify([election.role,voter.code,candidates]);
+  if(election.draftKeys[round]!==identity){state[key]=new Set(election.role==='delegate'&&!voter[voted]?candidates.map(c=>c.id):[]);election.draftKeys[round]=identity;}
+ }
+}
 function applyElection(data){
  const viewSignature=JSON.stringify([data.role,data.rounds,data.delegates,data.presentation]);
  const viewChanged=viewSignature!==election.viewSignature;
  const resultSignature=JSON.stringify([data.results,data.counts]);
  const resultChanged=resultSignature!==election.resultSignature;
- if(election.ready&&election.role==='delegate')for(const round of data.rounds){const old=election.rounds.find(r=>r.name===round.name);if(old&&old.version!==round.version)(round.name==='bch'?state.bchDraftSelectedIds:state.biThuDraftSelectedIds).clear();}
  election.ready=true;election.role=data.role;election.rounds=data.rounds;election.counts=data.counts;state.userRole=data.role||'delegate';state.sessionConfirmed=!!data.role;state.delegates=data.delegates||[];state.currentVoterIndex=0;
  const b=data.rounds.find(r=>r.name==='bch'),secretary=data.rounds.find(r=>r.name==='bithu');state.candidatesBch=b?.config.candidates||[];state.candidatesBiThu=secretary?.config.candidates||[];state.config.bchElectedQuota=b?.config.quota||1;state.config.bchMaxSelectAllowed=b?.config.max||1;state.config.biThuGateMode=secretary?.status==='open'?'OPEN':'WAIT_TIME';state.biThuUnlockedSession=secretary?.status==='open';docsCloud.token=data.role==='admin'?election.token:'';
  if(viewChanged&&data.presentation&&!document.activeElement?.id.startsWith('admin-qr-')){Object.assign(state.config,data.presentation);syncGateQrUrlInput(state.config.gateQrUrl);updateGateQrLabel(state.config.gateQrLabel);updateAdminQrCardPreview();}
+ initializeElectionDrafts();
  if(data.results)election.results=data.results;
  for(const receipt of data.receipts||[])sessionStorage.setItem('htb_receipt:'+getCurrentVoter().code+':'+receipt.round,receipt.receipt);
  for(const [set,candidates] of [[state.bchDraftSelectedIds,state.candidatesBch],[state.biThuDraftSelectedIds,state.candidatesBiThu]])for(const id of set)if(!candidates.some(c=>c.id===id))set.delete(id);
@@ -97,10 +104,10 @@ function confirmSubmitBchBallot(){return submitServerBallot('bch');}
 function submitBiThuBallot(){try{validDraft('bithu');if(!confirm('Xác nhận nộp phiếu Bí thư? Sau khi máy chủ nhận, phiếu không thể sửa.'))return;}catch(e){showToast(e.message,'error');return;}return submitServerBallot('bithu');}
 function openConfirmBchModal(){try{validDraft('bch');if(getCurrentVoter().votedBch)throw new Error('Đã nộp phiếu BCH.');document.getElementById('modal-bch-voter-name').textContent=getCurrentVoter().name;document.getElementById('modal-bch-keep-count').textContent=state.bchDraftSelectedIds.size;document.getElementById('modal-bch-unselected-list').textContent=state.candidatesBch.filter(c=>!state.bchDraftSelectedIds.has(c.id)).map(c=>c.name).join(', ')||'Không có';document.getElementById('modal-confirm-bch').classList.remove('hidden');document.getElementById('modal-confirm-bch').classList.add('flex');}catch(e){showToast(e.message,'warning');}}
 function unlockBiThuTab(){refreshElection().catch(e=>showToast(e.message,'error'));}
-function resetBchAllSelected(){state.bchDraftSelectedIds.clear();renderBchVotingGrid();}
-function resetBiThuAllSelected(){state.biThuDraftSelectedIds.clear();renderBiThuVotingSection();}
-function selectBiThuCandidate(id){if(getCurrentVoter().votedBiThu)return;const set=state.biThuDraftSelectedIds;if(set.has(id))set.delete(id);else{const max=election.rounds.find(r=>r.name==='bithu')?.config.max||1;if(max===1)set.clear();if(set.size>=max){showToast('Đã đạt giới hạn số ứng viên.','warning');return;}set.add(id);}renderBiThuVotingSection();}
-function toggleBchCandidate(id){if(getCurrentVoter().votedBch)return;const set=state.bchDraftSelectedIds;if(set.has(id))set.delete(id);else{if(set.size>=state.config.bchMaxSelectAllowed){showToast('Đã đạt giới hạn số ứng viên.','warning');return;}set.add(id);}renderBchVotingGrid();}
+function resetBchAllSelected(){if(getCurrentVoter().votedBch)return;state.bchDraftSelectedIds=new Set(state.candidatesBch.map(c=>c.id));renderBchVotingGrid();}
+function resetBiThuAllSelected(){if(getCurrentVoter().votedBiThu)return;state.biThuDraftSelectedIds=new Set(state.candidatesBiThu.map(c=>c.id));renderBiThuVotingSection();}
+function selectBiThuCandidate(id){if(getCurrentVoter().votedBiThu)return;const set=state.biThuDraftSelectedIds;if(set.has(id))set.delete(id);else set.add(id);renderBiThuVotingSection();}
+function toggleBchCandidate(id){if(getCurrentVoter().votedBch)return;const set=state.bchDraftSelectedIds;if(set.has(id))set.delete(id);else set.add(id);renderBchVotingGrid();}
 function computeElectionTally(){
  const b=election.results?.bch||{turnout:0,counts:{}},s=election.results?.bithu||{turnout:0,counts:{}};
  const rankedBch=state.candidatesBch.map(c=>({...c,agree:b.counts[c.id]||0,reject:b.turnout-(b.counts[c.id]||0),pct:b.turnout?+((b.counts[c.id]||0)*100/b.turnout).toFixed(1):0})).sort((a,b)=>b.agree-a.agree||a.id-b.id);
