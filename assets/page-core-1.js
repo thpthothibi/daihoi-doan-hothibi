@@ -440,6 +440,18 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
 
 
 
+    function formatVietnamCheckinTime(value) {
+      if (!value) return "Chưa có thời gian";
+      const date = new Date(value);
+      if (!Number.isFinite(date.getTime())) return "Chưa có thời gian";
+      const parts = new Intl.DateTimeFormat("vi-VN", {
+        timeZone: "Asia/Ho_Chi_Minh", year: "numeric", month: "2-digit", day: "2-digit",
+        hour: "2-digit", minute: "2-digit", second: "2-digit", hourCycle: "h23"
+      }).formatToParts(date);
+      const part = type => parts.find(p => p.type === type).value;
+      return `${part("hour")}:${part("minute")}:${part("second")} · ${part("day")}/${part("month")}/${part("year")}`;
+    }
+
     function renderVoterBar() {
       const voter = getCurrentVoter();
       const checkedCount = state.delegates.filter(d => d.checkedIn).length;
@@ -464,7 +476,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
       const homeCheckinPill = document.getElementById("home-voter-checkin-pill");
       if (homeCheckinPill) {
         homeCheckinPill.textContent = voter.checkedIn
-          ? `● Đã điểm danh (${voter.checkedInAt || '07:45:00'})`
+          ? `● Đã điểm danh · ${formatVietnamCheckinTime(voter.checkedInAt)}`
           : `○ Chưa điểm danh`;
       }
       const homeBchStatus = document.getElementById("home-voter-bch-status");
@@ -1349,9 +1361,11 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
 
     function startClock() {
       const clockEl = document.getElementById("live-clock");
-      setInterval(() => {
-        if (clockEl) clockEl.textContent = new Date().toLocaleTimeString("vi-VN");
-      }, 1000);
+      const updateClock = () => {
+        if (clockEl) clockEl.textContent = new Date().toLocaleTimeString("vi-VN", { timeZone: "Asia/Ho_Chi_Minh", hourCycle: "h23" });
+      };
+      updateClock();
+      setInterval(updateClock, 1000);
     }
 
     window.addEventListener("online", () => {
