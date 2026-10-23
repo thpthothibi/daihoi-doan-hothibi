@@ -1,0 +1,7 @@
+const VERSION='htb-shell-3.0';const ASSETS=['./','index.html','assets/tailwind.css','assets/logo.png','assets/page-core-1.js?v=3.0','assets/page-core-2.js?v=3.0','assets/agenda.js?v=3.0','assets/operations.js?v=3.0','assets/election.js?v=3.0','docs-config.json'];
+self.addEventListener('install',event=>event.waitUntil(caches.open(VERSION).then(cache=>cache.addAll(ASSETS)).then(()=>self.skipWaiting())));
+self.addEventListener('activate',event=>event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k.startsWith('htb-shell-')&&k!==VERSION).map(k=>caches.delete(k)))).then(()=>self.clients.claim())));
+self.addEventListener('fetch',event=>{const u=new URL(event.request.url);if(event.request.method!=='GET'||u.origin!==location.origin||u.pathname.includes('/api/'))return;
+ if(event.request.mode==='navigate'){event.respondWith(fetch(event.request).catch(async()=>{const cache=await caches.open(VERSION);return await cache.match(new URL('index.html',self.registration.scope))||new Response('Cần mở trang khi có mạng ít nhất một lần trước khi dùng ngoại tuyến.',{status:503,headers:{'Content-Type':'text/plain;charset=utf-8'}});}));return;}
+ if(/\/assets\//.test(u.pathname)||u.pathname.endsWith('/docs-config.json'))event.respondWith((async()=>{const cache=await caches.open(VERSION);const hit=await cache.match(event.request);if(hit)return hit;const response=await fetch(event.request);if(response.ok){const copy=response.clone();event.waitUntil(cache.put(event.request,copy));}return response;})());
+});

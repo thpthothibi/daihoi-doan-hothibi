@@ -706,6 +706,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
 
 
     function renderBchVotingGrid() {
+      if (typeof updateVotingButtons === "function") queueMicrotask(updateVotingButtons);
       const grid = document.getElementById("bch-candidates-grid");
       if (!grid) return;
       const voter = getCurrentVoter();
@@ -766,6 +767,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
 
     // TAB 2: SECRETARY VOTING (DEFAULT SELECTED, CLICK TO UNSELECT / STRIKETHROUGH)
     function renderBiThuVotingSection() {
+      if (typeof updateVotingButtons === "function") queueMicrotask(updateVotingButtons);
       const lockScreen = document.getElementById("bithu-lock-screen");
       const unlockedContent = document.getElementById("bithu-unlocked-content");
       const timeDisplay = document.getElementById("bithu-scheduled-time-display");
