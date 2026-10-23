@@ -1383,6 +1383,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     window.addEventListener("DOMContentLoaded", () => {
       capturePreviousDocuments();
       loadSavedState();
+      if(new URL(location.href).searchParams.has('stage'))return;
       if (!state.sessionConfirmed) {
         syncDraftWithCurrentVoter();
       }

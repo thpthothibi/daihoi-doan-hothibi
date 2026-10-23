@@ -140,16 +140,17 @@ window.addEventListener('DOMContentLoaded',async()=>{
  const observer=new MutationObserver(()=>{document.querySelectorAll('.candidate-card').forEach(e=>{e.setAttribute('role','checkbox');e.tabIndex=0;e.setAttribute('aria-checked',String(e.classList.contains('candidate-selected')));});});for(const id of ['bch-candidates-grid','bithu-candidates-grid'])observer.observe(document.getElementById(id),{childList:true});
  try{
   await configureElectionApi();
+  if(params.has('stage'))return;
   const bootToken=election.token;
   const startup=await Promise.allSettled([refreshElection(),loadDelegateDirectory(),refreshCloudDocuments(false,true)]);
   for(const result of startup)if(result.status==='rejected')renderElectionStatus(result.reason.message);
   setDocViewerMode('iframe');
   if(state.sessionConfirmed&&election.token===bootToken&&state.mainSection==='overview'&&(election.role!=='delegate'||params.get('gate')!=='checkin')){document.getElementById('modal-qr-login').classList.add('hidden');document.getElementById('modal-qr-login').classList.remove('flex');switchMainSection(election.role==='admin'?'admin':election.role==='bch'?'excel':'overview');}
- }catch(e){renderElectionStatus(e.message);}finally{scheduleElectionPoll();}
+ }catch(e){renderElectionStatus(e.message);}finally{if(!params.has('stage'))scheduleElectionPoll();}
 });
 async function configureElectionApi(){
  try{const response=await fetch(new URL('./docs-config.json',document.baseURI),{cache:'no-store',signal:AbortSignal.timeout(4000)});if(response.ok){const data=await response.json();if(data.apiBase)docsCloud.apiBase=validatedDocsBase(data.apiBase);}}catch{}
- document.getElementById('docs-sync-api').value=docsCloud.apiBase;election.configured=true;
+ document.getElementById('docs-sync-api').value=docsCloud.apiBase;election.configured=true;window.dispatchEvent(new Event('election-api-ready'));
 }
 function scheduleElectionPoll(){
  clearTimeout(election.pollTimer);const base=election.pollFailures?Math.min(120000,30000*2**Math.min(2,election.pollFailures)):(ops.data?.polls?.some(p=>p.status==='open')?5000:(election.role==='admin'||election.role==='bch')&&state.mainSection==='excel'?10000:30000);
@@ -171,6 +172,6 @@ const baseRenderElectionStatus=renderElectionStatus;
 window.renderElectionStatus=function(message){baseRenderElectionStatus(message);document.querySelectorAll('[data-bch-total]').forEach(e=>e.textContent=state.candidatesBch.length);const button=document.getElementById('btn-filter-all-cand');if(button)button.textContent='Tất cả ('+state.candidatesBch.length+')';const select=document.getElementById('admin-bch-quota');if(select){select.disabled=true;select.title='Chỉnh chỉ tiêu tại Điều hành máy chủ trước khi mở vòng';}const time=document.getElementById('gate-checkin-time-label');if(time&&getCurrentVoter().checkedInAt)time.textContent='Điểm danh: '+formatVietnamCheckinTime(getCurrentVoter().checkedInAt);};
 function csvCell(value){let text=String(value??'');if(/^[\s]*[=+@-]/.test(text))text="'"+text;return text.replace(/"/g,'""');}
 const renderVersionStatus=renderElectionStatus;
-window.renderElectionStatus=function(message){renderVersionStatus(message);const status=document.getElementById('election-status');if(status&&!status.textContent.startsWith('HTB 3.0'))status.textContent='HTB 3.0 • '+status.textContent;if(status)status.hidden=!message&&!['admin','bch'].includes(election.role);onQrDelegateSelectionChange();};
+window.renderElectionStatus=function(message){renderVersionStatus(message);const status=document.getElementById('election-status');if(status&&!status.textContent.startsWith('HTB 3.0.2'))status.textContent='HTB 3.0.2 • '+status.textContent;if(status)status.hidden=!message&&!['admin','bch'].includes(election.role);onQrDelegateSelectionChange();};
 
 async function saveGateQrSettings(){return runElection(async()=>{const gateQrUrl=normalizeGateQrUrl(document.getElementById('admin-qr-link-input').value);const gateQrLabel=document.getElementById('admin-qr-label-input').value.trim().toUpperCase();await electionRequest('presentation','PUT',{gateQrUrl,gateQrLabel});await refreshElection();showToast('Đã lưu cổng QR trên máy chủ cho tất cả thiết bị.','success');});}

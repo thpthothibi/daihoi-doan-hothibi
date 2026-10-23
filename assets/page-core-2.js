@@ -190,5 +190,5 @@ async function initDocumentsSync() {
   } catch (e) { updateDocsSyncStatus(e.message, true); }
 }
 
-setInterval(() => { if (!document.hidden && navigator.onLine && docsCloud.apiBase && !docsCloud.busy) refreshCloudDocuments(false).catch(() => {}); }, 90000 + Math.random() * 15000);
-window.addEventListener('focus', () => { if (docsCloud.apiBase && Date.now() - docsCloud.lastSync > 15000) refreshCloudDocuments(false).catch(() => {}); });
+setInterval(() => { if (!new URL(location.href).searchParams.has('stage') && !document.hidden && navigator.onLine && docsCloud.apiBase && !docsCloud.busy) refreshCloudDocuments(false).catch(() => {}); }, 90000 + Math.random() * 15000);
+window.addEventListener('focus', () => { if (!new URL(location.href).searchParams.has('stage') && docsCloud.apiBase && Date.now() - docsCloud.lastSync > 15000) refreshCloudDocuments(false).catch(() => {}); });

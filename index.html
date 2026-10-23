@@ -126,6 +126,17 @@ body:has(#modal-qr-login.flex) { overflow:hidden; }
 </style>
 <style>#section-excel.op-results-sealed > :not(.op-button):not(#op-sealed-banner){display:none}</style>
 <style>.op-report-preview{overflow:auto;margin-top:16px;background:white;padding:12px;font-family:serif}.op-report-preview table{border-collapse:collapse;width:100%}.op-report-preview td{border:1px solid #94a3b8;padding:6px;font-size:12px}</style>
+
+<style id="compact-navigation-policy">
+#mobile-drawer nav{padding:10px}#mobile-drawer nav button{display:flex;width:100%;align-items:center;justify-content:flex-start;gap:9px;min-height:40px;padding:8px 11px;margin:2px 0;border:0;border-radius:9px;background:transparent;color:#e2e8f0;text-align:left;font-size:13px;line-height:1.35;font-weight:600}#mobile-drawer nav button:hover{background:#1e293b}#mobile-drawer nav button.bg-sky-600{background:#0284c7;color:#fff}#mobile-drawer nav button>span:last-child{flex:initial}#mobile-drawer nav button>div{gap:9px}#drawer-btn-voting>span:last-child{margin-left:auto;font-size:10px}#mobile-drawer nav>div:first-child,#drawer-bch-group-label,#drawer-admin-group>div:first-child{padding-top:8px;padding-bottom:4px;font-size:10px}#drawer-admin-card{padding:10px 12px;margin-top:8px}#drawer-account-desc{font-size:10px}#drawer-footer{padding:10px 14px}
+#admin-card-election-policy{margin-top:0;border:2px solid #38bdf8;background:#fff;padding:16px;border-radius:16px;min-width:0}#admin-card-election-policy>h3{font-size:17px}#admin-card-election-policy details{margin-top:10px}#admin-card-election-policy summary{display:flex;align-items:center;flex-wrap:wrap;gap:6px;font-size:14px}.op-mode-badge{margin-left:auto;padding:4px 8px;border-radius:20px;background:#e0f2fe;color:#075985;font-size:11px}.op-policy-lock{font-weight:600;color:#075985}.op-policy>label:first-of-type{padding:12px;background:white;border:2px solid #0ea5e9;border-radius:10px;font-size:14px}.op-policy input[type=checkbox]{width:18px;height:18px;vertical-align:middle;accent-color:#0284c7}
+.op-stage{padding:20px 28px}.op-stage-toolbar{gap:5px}.op-stage-toolbar .op-button{margin:0;min-height:40px;padding:8px 12px}.op-stage h1{font-size:clamp(24px,2.7vw,44px);margin:18px 0}.op-stage h2{font-size:clamp(24px,2.6vw,42px);margin:18px 0}.op-stage-recent{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 20px}.op-stage .op-stage-recent p{font-size:clamp(17px,1.6vw,26px);margin:0;padding:8px 12px;background:#ffffff0a;border-radius:8px;overflow-wrap:anywhere}@media(max-width:639px){.op-stage{padding:14px}.op-stage-recent{grid-template-columns:minmax(0,1fr)}.op-mode-badge{margin-left:0}}
+</style>
+<style id="stage-design-3-0-2">
+.op-stage{background:radial-gradient(ellipse at 0 0,#12396b 0,transparent 55%),#07172e}.op-stage-toolbar .active{background:#38bdf8;color:#082f49;border-color:#38bdf8}.op-stage .op-stage-sync{font-size:12px;color:#86efac;margin:10px 0}.op-stage .op-stage-sync.stale{color:#fbbf24}.op-stage-hero{display:flex;align-items:center;gap:18px;margin:20px 0 24px}.op-stage-logo{width:76px;height:76px;object-fit:contain;background:white;border-radius:50%;padding:3px}.op-stage .op-stage-eyebrow{font-size:clamp(12px,1.1vw,18px);font-weight:700;letter-spacing:.08em;color:#93c5fd;margin:0 0 8px}.op-stage .op-stage-hero h1{margin:0;font-size:clamp(24px,2.8vw,44px)}.op-stage-layout{display:grid;grid-template-columns:minmax(0,.85fr) minmax(0,1.5fr);gap:22px}.op-stage-card{background:linear-gradient(130deg,#143459e6,#0c2342e6);border:1px solid #ffffff26;border-radius:22px;padding:24px;min-width:0;box-shadow:0 14px 35px #0002}.op-stage-attendance{text-align:center;display:flex;flex-direction:column;justify-content:center}.op-stage-number{font-size:clamp(68px,8vw,136px);line-height:1.1;letter-spacing:-.04em;font-weight:800;color:#7dd3fc;font-variant-numeric:tabular-nums}.op-stage .op-stage-card>p{font-size:clamp(16px,1.6vw,26px);color:#cbd5e1;margin:10px 0}.op-stage-progress{height:14px;overflow:hidden;background:#02061777;border-radius:99px;margin:18px 0}.op-stage-progress>div{height:100%;background:linear-gradient(90deg,#0ea5e9,#34d399);border-radius:99px;transition:width .4s}.op-stage .op-stage-quorum{border:1px solid #fbbf2455;background:#fbbf2410;color:#fde68a;border-radius:10px;padding:10px;font-size:18px}.op-stage .op-stage-quorum.enough{color:#86efac;background:#22c55e12;border-color:#22c55e55}.op-stage .op-stage-card h2{font-size:clamp(20px,1.8vw,30px);margin:0 0 20px}.op-stage-recent{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.op-stage-person{display:flex;align-items:center;gap:10px;padding:12px;background:#ffffff08;border-radius:12px;min-width:0}.op-stage-avatar{display:grid;place-items:center;background:#0ea5e933;color:#7dd3fc;width:40px;height:40px;border-radius:12px;flex-shrink:0;font-size:16px;font-weight:800}.op-stage-person strong{display:block;font-size:clamp(15px,1.3vw,22px);overflow-wrap:anywhere}.op-stage-person div>span{display:block;color:#94a3b8;font-size:15px;margin-top:3px}.op-stage-ballots{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px}.op-stage-ballots .op-stage-card{text-align:center}.op-stage-box-icon{font-size:44px;margin-bottom:12px}.op-stage .op-stage-round-status{font-size:17px;color:#86efac}.op-stage-mode{display:inline-block;padding:7px 12px;background:#ffffff0a;border:1px solid #ffffff25;border-radius:99px;font-size:14px;color:#bae6fd}.op-stage .op-stage-countdown{font-variant-numeric:tabular-nums;color:#fde68a;font-weight:700}.op-stage .op-stage-remaining{font-size:17px}.op-stage .op-stage-empty{font-size:20px;color:#94a3b8;padding:16px}.op-stage .op-stage-poll{font-size:19px;padding:16px;border:1px solid #38bdf833;border-radius:12px;margin-top:20px}@media(max-width:767px){.op-stage-layout,.op-stage-ballots{grid-template-columns:minmax(0,1fr)}.op-stage-card{padding:18px}.op-stage-recent{grid-template-columns:minmax(0,1fr)}.op-stage-logo{width:52px;height:52px}.op-stage-hero{gap:12px}.op-stage-hero h1{font-size:25px}.op-stage-toolbar .op-button{padding:8px;font-size:11px}}
+</style>
+<style>.op-stage-box-icon{width:52px;height:40px;border:3px solid #7dd3fc;border-radius:7px;margin:10px auto 25px;position:relative}.op-stage-box-icon:before{content:'';position:absolute;left:8px;right:8px;top:9px;border-top:3px solid #7dd3fc}.op-stage-box-icon:after{content:'';position:absolute;width:19px;height:22px;left:14px;top:-17px;transform:rotate(-12deg);background:#143459;border:2px solid #7dd3fc;border-radius:2px}.op-poll-card .op-button{min-height:44px}.op-poll-card .op-button:not(:disabled){border-color:#0284c7;color:#075985;background:#e0f2fe}</style>
+<style>.op-stage .op-stage-card>.op-stage-round-status{color:#86efac}.op-stage .op-stage-card>.op-stage-countdown{color:#fde68a}</style>
 </head>
 <body class="min-h-screen flex flex-col">
 
@@ -245,18 +256,18 @@ body:has(#modal-qr-login.flex) { overflow:hidden; }
 
         <button id="drawer-btn-overview" onclick="switchMainSection('overview')" class="w-full px-3.5 py-2.5 rounded-xl text-left text-xs sm:text-sm font-bold flex items-center gap-3 transition bg-sky-600 text-white">
           <span class="w-5 text-center">🏠</span>
-          <span>1. Chương trình Đại hội</span>
+          <span>Chương trình</span>
         </button>
 
         <button id="drawer-btn-documents" onclick="switchMainSection('documents')" class="w-full px-3.5 py-2.5 rounded-xl text-left text-xs sm:text-sm font-semibold flex items-center gap-3 transition text-slate-200 hover:bg-slate-800">
           <span class="w-5 text-center">📂</span>
-          <span>2. Văn kiện Đại hội</span>
+          <span>Văn kiện</span>
         </button>
 
         <button id="drawer-btn-voting" onclick="switchMainSection('voting')" class="w-full px-3.5 py-2.5 rounded-xl text-left text-xs sm:text-sm font-semibold flex items-center justify-between transition text-slate-200 hover:bg-slate-800">
           <div class="flex items-center gap-3">
             <span class="w-5 text-center">🗳️</span>
-            <span>3. Bầu cử (BCH &amp; Bí thư)</span>
+            <span>Bầu cử</span>
           </div>
           <span class="px-1.5 py-0.5 text-[10px] rounded bg-amber-400 text-slate-950 font-extrabold">2 Tab</span>
         </button>
@@ -267,7 +278,7 @@ body:has(#modal-qr-login.flex) { overflow:hidden; }
 
           <button id="drawer-btn-excel" onclick="switchMainSection('excel')" class="w-full px-3.5 py-2.5 rounded-xl text-left text-xs sm:text-sm font-semibold flex items-center gap-3 transition text-slate-200 hover:bg-slate-800">
             <span class="w-5 text-center">📊</span>
-            <span>4. Kết quả &amp; Xuất Excel</span>
+            <span>Kết quả &amp; Excel</span>
           </button>
         </div>
 
@@ -277,12 +288,12 @@ body:has(#modal-qr-login.flex) { overflow:hidden; }
 
           <button id="drawer-btn-admin" onclick="switchMainSection('admin')" class="w-full px-3.5 py-2.5 rounded-xl text-left text-xs sm:text-sm font-semibold flex items-center gap-3 transition text-slate-200 hover:bg-slate-800">
             <span class="w-5 text-center">⚙️</span>
-            <span>5. Quản trị Drive, QR &amp; Điều hành máy chủ</span>
+            <span>Quản trị</span>
           </button>
 
           <button id="drawer-btn-cloud" onclick="switchMainSection('cloud')" class="w-full px-3.5 py-2.5 rounded-xl text-left text-xs sm:text-sm font-semibold flex items-center gap-3 transition text-slate-200 hover:bg-slate-800">
             <span class="w-5 text-center">☁️</span>
-            <span>6. Lưu trữ Appwrite &amp; Cloud</span>
+            <span>Kết nối &amp; lưu trữ</span>
           </button>
         </div>
       </nav>
@@ -609,7 +620,7 @@ body:has(#modal-qr-login.flex) { overflow:hidden; }
           ADMIN CONTROL
         </span>
         <h2 class="text-xl sm:text-2xl font-extrabold text-slate-900 mt-2">
-          Quản trị cấu hình Google Drive &amp; Mã QR
+          Quản trị Đại hội
         </h2>
         <p class="text-xs sm:text-sm text-slate-500 mt-0.5">
           Thiết lập tài liệu, điểm danh QR, danh sách Bí thư / BCH và mã định danh đại biểu
@@ -1106,7 +1117,7 @@ body:has(#modal-qr-login.flex) { overflow:hidden; }
     <!-- ============================================================== -->
     <!-- SECTION 6: KẾT NỐI APPWRITE, DRIVE, CLOUDFLARE & HƯỚNG DẪN GITHUB -->
     <!-- ============================================================== -->
-    <section id="section-cloud" class="space-y-5 hidden"><div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 sm:p-6 space-y-5"><h2 class="text-xl font-extrabold text-slate-900">6. Lưu trữ Appwrite &amp; Cloud</h2><div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs"><div class="p-4 rounded-2xl bg-rose-50 border border-rose-200"><strong>Appwrite</strong><p>Danh sách văn kiện dùng chung. Các biến và API Key được thiết lập tại Worker; không đưa khóa vào GitHub.</p></div><div class="p-4 rounded-2xl bg-amber-50 border border-amber-200"><strong>Cloudflare Worker + D1</strong><p>Xác thực, điểm danh, lưu phiếu, chống nộp trùng và kiểm phiếu tập trung. D1 dùng binding ELECTION_DB.</p></div><div class="p-4 rounded-2xl bg-blue-50 border border-blue-200"><strong>Google Drive</strong><p>Lưu PDF và cấp quyền xem công khai theo liên kết. Danh sách và quyền quản trị văn kiện đi qua Worker.</p></div></div><div class="space-y-2 text-sm leading-relaxed"><p><strong>1.</strong> Đọc HUONG_DAN_CAI_DAT.md trong gói cập nhật. Sao lưu trước khi thay bản đang dùng.</p><p><strong>2.</strong> Tạo Cloudflare D1, chạy cả worker/migrations/0001_election.sql và 0002_operations.sql, gắn tên ELECTION_DB vào Worker hiện tại rồi triển khai Worker mới.</p><p><strong>3.</strong> Giữ nguyên các biến Appwrite, ALLOWED_ORIGINS và hai secret APPWRITE_API_KEY, ADMIN_SYNC_TOKEN đang dùng.</p><p><strong>4.</strong> Đưa toàn bộ nội dung thư mục web/ lên gốc repository GitHub. Chọn GitHub Pages: main / root; Cloudflare Pages cùng repository, thư mục xuất bản là gốc.</p><p><strong>5.</strong> Mở setup.html để tạo mật khẩu admin và bch một lần. Dùng khóa ADMIN_SYNC_TOKEN đã giữ riêng.</p><p><strong>6.</strong> Đăng nhập admin, nhập đại biểu,  duyệt ứng viên và quy chế, kiểm thử hai thiết bị trước khi mở vòng chính thức.</p></div><div class="flex flex-wrap gap-2"><button onclick="testAllCloudConnections()" class="px-4 py-2 rounded-xl bg-indigo-600 text-white font-bold text-xs">Kiểm tra API và dữ liệu</button><button onclick="downloadDocsPublicConfig()" class="px-4 py-2 rounded-xl bg-slate-900 text-white font-bold text-xs">Tải docs-config.json công khai</button></div><p id="cloud-ping-status-box" role="status" class="text-xs break-words"></p><p class="text-xs text-slate-500">Không tải cấu hình bảo mật hoặc tệp mã kích hoạt lên repository công khai. Kết quả trên web là báo cáo hỗ trợ; Ban kiểm phiếu xác nhận theo quy chế đã duyệt.</p></div></section>
+    <section id="section-cloud" class="space-y-5 hidden"><div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 sm:p-6 space-y-5"><h2 class="text-xl font-extrabold text-slate-900">Kết nối &amp; lưu trữ</h2><div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs"><div class="p-4 rounded-2xl bg-rose-50 border border-rose-200"><strong>Appwrite</strong><p>Danh sách văn kiện dùng chung. Các biến và API Key được thiết lập tại Worker; không đưa khóa vào GitHub.</p></div><div class="p-4 rounded-2xl bg-amber-50 border border-amber-200"><strong>Cloudflare Worker + D1</strong><p>Xác thực, điểm danh, lưu phiếu, chống nộp trùng và kiểm phiếu tập trung. D1 dùng binding ELECTION_DB.</p></div><div class="p-4 rounded-2xl bg-blue-50 border border-blue-200"><strong>Google Drive</strong><p>Lưu PDF và cấp quyền xem công khai theo liên kết. Danh sách và quyền quản trị văn kiện đi qua Worker.</p></div></div><div class="space-y-2 text-sm leading-relaxed"><p><strong>1.</strong> Đọc HUONG_DAN_CAI_DAT.md trong gói cập nhật. Sao lưu trước khi thay bản đang dùng.</p><p><strong>2.</strong> Tạo Cloudflare D1, chạy cả worker/migrations/0001_election.sql và 0002_operations.sql, gắn tên ELECTION_DB vào Worker hiện tại rồi triển khai Worker mới.</p><p><strong>3.</strong> Giữ nguyên các biến Appwrite, ALLOWED_ORIGINS và hai secret APPWRITE_API_KEY, ADMIN_SYNC_TOKEN đang dùng.</p><p><strong>4.</strong> Đưa toàn bộ nội dung thư mục web/ lên gốc repository GitHub. Chọn GitHub Pages: main / root; Cloudflare Pages cùng repository, thư mục xuất bản là gốc.</p><p><strong>5.</strong> Mở setup.html để tạo mật khẩu admin và bch một lần. Dùng khóa ADMIN_SYNC_TOKEN đã giữ riêng.</p><p><strong>6.</strong> Đăng nhập admin, nhập đại biểu,  duyệt ứng viên và quy chế, kiểm thử hai thiết bị trước khi mở vòng chính thức.</p></div><div class="flex flex-wrap gap-2"><button onclick="testAllCloudConnections()" class="px-4 py-2 rounded-xl bg-indigo-600 text-white font-bold text-xs">Kiểm tra API và dữ liệu</button><button onclick="downloadDocsPublicConfig()" class="px-4 py-2 rounded-xl bg-slate-900 text-white font-bold text-xs">Tải docs-config.json công khai</button></div><p id="cloud-ping-status-box" role="status" class="text-xs break-words"></p><p class="text-xs text-slate-500">Không tải cấu hình bảo mật hoặc tệp mã kích hoạt lên repository công khai. Kết quả trên web là báo cáo hỗ trợ; Ban kiểm phiếu xác nhận theo quy chế đã duyệt.</p></div></section>
 
   </main>
 
@@ -1521,10 +1532,10 @@ body:has(#modal-qr-login.flex) { overflow:hidden; }
     <div id="gate-qr-zoom-url"></div>
   </dialog>
 
-  <script src="assets/page-core-1.js?v=3.0"></script>
-<script src="assets/page-core-2.js?v=3.0"></script>
-<script src="assets/agenda.js?v=3.0"></script>
-<script src="assets/operations.js?v=3.0"></script>
-<script src="assets/election.js?v=3.0"></script>
+  <script src="assets/page-core-1.js?v=3.0.2"></script>
+<script src="assets/page-core-2.js?v=3.0.2"></script>
+<script src="assets/agenda.js?v=3.0.2"></script>
+<script src="assets/operations.js?v=3.0.2"></script>
+<script src="assets/election.js?v=3.0.2"></script>
 </body>
 </html>
