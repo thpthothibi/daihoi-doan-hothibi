@@ -1,4 +1,4 @@
-/* Authoritative election bridge, version 2.1. No ballot is accepted locally. */
+/* Authoritative election bridge, version 2.2. No ballot is accepted locally. */
 const election={token:sessionStorage.getItem('htb_session_v2')||'',role:null,rounds:[],results:null,busy:false,ready:false,reading:null,counts:{total:0,checkedIn:0},directory:[],directoryRevision:'',viewSignature:'',resultSignature:'',pollTimer:null,pollFailures:0,lastPoll:0};
 const guest={code:'—',name:'Chưa xác thực đại biểu',className:'—',checkedIn:false,votedBch:false,votedBiThu:false};
 async function electionRequest(path,method='GET',body,authenticated=true){
@@ -33,6 +33,7 @@ function applyElection(data){
  const b=data.rounds.find(r=>r.name==='bch'),secretary=data.rounds.find(r=>r.name==='bithu');state.candidatesBch=b?.config.candidates||[];state.candidatesBiThu=secretary?.config.candidates||[];state.config.bchElectedQuota=b?.config.quota||1;state.config.bchMaxSelectAllowed=b?.config.max||1;state.config.biThuGateMode=secretary?.status==='open'?'OPEN':'WAIT_TIME';state.biThuUnlockedSession=secretary?.status==='open';docsCloud.token=data.role==='admin'?election.token:'';
  if(viewChanged&&data.presentation&&!document.activeElement?.id.startsWith('admin-qr-')){Object.assign(state.config,data.presentation);syncGateQrUrlInput(state.config.gateQrUrl);updateGateQrLabel(state.config.gateQrLabel);updateAdminQrCardPreview();}
  initializeElectionDrafts();
+ applyCongressAgenda(data.presentation?.agenda);
  if(data.results)election.results=data.results;
  for(const receipt of data.receipts||[])sessionStorage.setItem('htb_receipt:'+getCurrentVoter().code+':'+receipt.round,receipt.receipt);
  for(const [set,candidates] of [[state.bchDraftSelectedIds,state.candidatesBch],[state.biThuDraftSelectedIds,state.candidatesBiThu]])for(const id of set)if(!candidates.some(c=>c.id===id))set.delete(id);
@@ -168,6 +169,6 @@ const baseRenderElectionStatus=renderElectionStatus;
 window.renderElectionStatus=function(message){baseRenderElectionStatus(message);document.querySelectorAll('[data-bch-total]').forEach(e=>e.textContent=state.candidatesBch.length);const button=document.getElementById('btn-filter-all-cand');if(button)button.textContent='Tất cả ('+state.candidatesBch.length+')';const select=document.getElementById('admin-bch-quota');if(select){select.disabled=true;select.title='Chỉnh chỉ tiêu tại Điều hành máy chủ trước khi mở vòng';}const time=document.getElementById('gate-checkin-time-label');if(time&&getCurrentVoter().checkedInAt)time.textContent='Điểm danh: '+formatVietnamCheckinTime(getCurrentVoter().checkedInAt);};
 function csvCell(value){let text=String(value??'');if(/^[\s]*[=+@-]/.test(text))text="'"+text;return text.replace(/"/g,'""');}
 const renderVersionStatus=renderElectionStatus;
-window.renderElectionStatus=function(message){renderVersionStatus(message);const status=document.getElementById('election-status');if(status&&!status.textContent.startsWith('HTB 2.1'))status.textContent='HTB 2.1 • '+status.textContent;if(status)status.hidden=!message&&!['admin','bch'].includes(election.role);onQrDelegateSelectionChange();};
+window.renderElectionStatus=function(message){renderVersionStatus(message);const status=document.getElementById('election-status');if(status&&!status.textContent.startsWith('HTB 2.2'))status.textContent='HTB 2.2 • '+status.textContent;if(status)status.hidden=!message&&!['admin','bch'].includes(election.role);onQrDelegateSelectionChange();};
 
 async function saveGateQrSettings(){return runElection(async()=>{const gateQrUrl=normalizeGateQrUrl(document.getElementById('admin-qr-link-input').value);const gateQrLabel=document.getElementById('admin-qr-label-input').value.trim().toUpperCase();await electionRequest('presentation','PUT',{gateQrUrl,gateQrLabel});await refreshElection();showToast('Đã lưu cổng QR trên máy chủ cho tất cả thiết bị.','success');});}

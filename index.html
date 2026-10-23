@@ -101,6 +101,26 @@ body:has(#modal-qr-login.flex) { overflow:hidden; }
   #drawer-admin-card > div { flex-wrap:wrap; }
 }
 </style>
+<style id="congress-agenda-styles">
+#congress-agenda-venue { max-width:50%; white-space:normal; }
+.agenda-session { display:flex; align-items:center; gap:12px; padding:14px; border:1px solid #e2e8f0; border-radius:12px; background:#f8fafc; }
+.agenda-time { flex:0 0 96px; padding:8px 3px; border-radius:8px; text-align:center; font-size:12px; font-weight:800; background:#d1fae5; color:#065f46; }
+.agenda-session-content { flex:1; min-width:0; overflow-wrap:anywhere; }
+.agenda-session-title { font-size:14px; font-weight:700; color:#0f172a; }
+.agenda-session-description { font-size:12px; color:#64748b; white-space:pre-line; }
+.agenda-link { flex-shrink:0; font-size:12px; font-weight:700; color:#0369a1; min-height:40px; }
+.agenda-tone-bch { background:#f0f9ff; border-color:#bae6fd; }.agenda-tone-bch .agenda-time { background:#0284c7; color:white; }
+.agenda-tone-bithu { background:#fffbeb; border-color:#fde68a; }.agenda-tone-bithu .agenda-time { background:#fcd34d; color:#451a03; }
+.agenda-tone-documents .agenda-time { background:#dbeafe; color:#1e40af; }
+.agenda-editor { display:grid; gap:16px; margin-top:16px; }.agenda-editor label { display:grid; gap:5px; font-size:12px; font-weight:700; color:#334155; min-width:0; }
+.agenda-editor input,.agenda-editor textarea,.agenda-editor select { width:100%; min-width:0; padding:10px; border:1px solid #cbd5e1; border-radius:9px; background:white; color:#0f172a; font-size:14px; font-weight:400; }
+#agenda-edit-items { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px; }
+.agenda-edit-session { display:grid; gap:12px; min-width:0; border:1px solid #e2e8f0; border-radius:12px; padding:14px; background:#f8fafc; }
+.agenda-edit-session legend { font-size:13px; font-weight:800; padding:0 6px; }.agenda-edit-times { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; }
+.agenda-edit-row-actions,.agenda-editor-actions { display:flex; flex-wrap:wrap; gap:8px; }
+.agenda-secondary,.agenda-primary { border:1px solid #cbd5e1; border-radius:9px; padding:10px 12px; font-size:12px; font-weight:700; min-height:40px; }.agenda-secondary { background:white; color:#334155; }.agenda-primary { background:#0369a1; border-color:#0369a1; color:white; }
+@media(max-width:639px){ #agenda-edit-items { grid-template-columns:minmax(0,1fr); }.agenda-session { flex-wrap:wrap; gap:10px; padding:12px; }.agenda-session-content { flex-basis:calc(100% - 110px); }.agenda-link { margin-left:106px; text-align:left; }.agenda-session-title { font-size:12px; } }
+</style>
 </head>
 <body class="min-h-screen flex flex-col">
 
@@ -354,10 +374,10 @@ body:has(#modal-qr-login.flex) { overflow:hidden; }
       <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 sm:p-6">
         <div class="flex items-center justify-between mb-4">
           <h3 class="text-base sm:text-lg font-extrabold text-slate-900">Chương trình làm việc Đại hội</h3>
-          <span class="text-xs font-semibold px-2.5 py-1 rounded-full bg-sky-100 text-sky-800">Hội trường THPT Hồ Thị Bi</span>
+          <span class="text-xs font-semibold px-2.5 py-1 rounded-full bg-sky-100 text-sky-800" id="congress-agenda-venue">Hội trường THPT Hồ Thị Bi</span>
         </div>
 
-        <div class="space-y-2.5">
+        <div id="congress-agenda-list" class="space-y-2.5">
           <div class="flex items-center gap-3 p-3.5 rounded-xl bg-slate-50 border border-slate-200/80">
             <div class="w-24 shrink-0 text-xs font-extrabold text-emerald-800 bg-emerald-100 rounded-lg py-2 text-center">07:30 - 08:15</div>
             <div class="min-w-0 flex-1">
@@ -612,12 +632,27 @@ body:has(#modal-qr-login.flex) { overflow:hidden; }
         </div>
       </div>
 
+      <div id="admin-card-agenda" class="bg-white rounded-2xl border border-sky-200 shadow-sm p-4 sm:p-5">
+        <h3 class="text-base font-extrabold text-slate-900">Chỉnh chương trình Đại hội</h3>
+        <p class="text-xs text-slate-600 mt-1">Sửa giờ, nội dung và thứ tự các phiên. Bấm Lưu chương trình để cập nhật cho tất cả đại biểu.</p>
+        <form id="agenda-editor-form" class="agenda-editor">
+          <label>Địa điểm<input id="agenda-edit-venue" maxlength="160" required></label>
+          <div id="agenda-edit-items"></div>
+          <div class="agenda-editor-actions">
+            <button id="agenda-add-session" type="button" class="agenda-secondary">+ Thêm phiên</button>
+            <button id="agenda-reload" type="button" class="agenda-secondary">Nạp lại từ máy chủ</button>
+            <button id="agenda-save" type="submit" class="agenda-primary">Lưu chương trình</button>
+          </div>
+          <p id="agenda-editor-status" role="status" class="text-xs text-slate-600"></p>
+        </form>
+      </div>
+
       <!-- Main 2-Column Layout Matching Screenshot -->
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-5">
         <!-- LEFT COLUMN (7 cols): Cấu hình Google Drive + Danh sách văn kiện đã nhận -->
         <div class="lg:col-span-7 space-y-5">
           <!-- Card 1: Cấu hình Google Drive -->
-          <div class="bg-white rounded-2xl border border-sky-200 shadow-sm p-5 space-y-4 mb-5"><h3 class="text-base font-extrabold text-slate-900">Điều hành máy chủ — phiên bản 2.1</h3><p class="text-xs text-slate-600">Nhập danh sách thật và duyệt quy chế trước khi mở vòng. Danh sách và giới hạn chọn bị khóa sau khi nhận phiếu đầu tiên. Kết quả tổng hợp dành cho BCH và quản trị; việc công nhận kết quả theo quy chế do Ban kiểm phiếu duyệt.</p><details class="border border-slate-200 rounded-xl p-3"><summary class="font-bold text-sm cursor-pointer">Ban Chấp hành: <span id="round-status-bch">Chưa kết nối</span></summary><div class="space-y-3 pt-3"><div class="flex flex-wrap gap-2"><button onclick="loadRoundEditor('bch')" class="px-3 py-2 bg-slate-100 rounded-lg text-xs">Nạp từ máy chủ</button><button onclick="seedRoundEditor('bch')" class="px-3 py-2 bg-slate-100 rounded-lg text-xs">Nạp danh sách có sẵn để rà soát</button></div><label for="round-candidates-bch" class="block text-xs font-bold">Mỗi dòng: Họ tên | Chi đoàn | Chức vụ / Giới thiệu</label><textarea id="round-candidates-bch" rows="5" class="w-full border rounded-xl p-3 text-xs" placeholder="Nguyễn Văn A | 12A1 | Đoàn viên"></textarea><div class="grid grid-cols-3 gap-2"><label class="text-xs">Chọn ít nhất<input id="round-min-bch" type="number" min="0" max="100" value="0" class="w-full border rounded-lg p-2"></label><label class="text-xs">Chọn tối đa<input id="round-max-bch" type="number" min="0" max="100" value="1" class="w-full border rounded-lg p-2"></label><label class="text-xs">Chỉ tiêu<input id="round-quota-bch" type="number" min="0" max="100" value="1" class="w-full border rounded-lg p-2"></label></div><div class="flex flex-wrap gap-2"><button onclick="saveRoundEditor('bch')" class="px-3 py-2 bg-sky-600 text-white rounded-lg text-xs font-bold">Lưu danh sách &amp; quy chế</button><button onclick="setRoundStatus('bch','open')" class="px-3 py-2 bg-emerald-600 text-white rounded-lg text-xs font-bold">Mở vòng</button><button onclick="setRoundStatus('bch','closed')" class="px-3 py-2 bg-rose-600 text-white rounded-lg text-xs font-bold">Đóng vòng</button></div></div></details><details class="border border-slate-200 rounded-xl p-3"><summary class="font-bold text-sm cursor-pointer">Bí thư: <span id="round-status-bithu">Chưa kết nối</span></summary><div class="space-y-3 pt-3"><div class="flex flex-wrap gap-2"><button onclick="loadRoundEditor('bithu')" class="px-3 py-2 bg-slate-100 rounded-lg text-xs">Nạp từ máy chủ</button><button onclick="seedRoundEditor('bithu')" class="px-3 py-2 bg-slate-100 rounded-lg text-xs">Nạp danh sách có sẵn để rà soát</button></div><label for="round-candidates-bithu" class="block text-xs font-bold">Mỗi dòng: Họ tên | Chi đoàn | Chức vụ / Giới thiệu</label><textarea id="round-candidates-bithu" rows="5" class="w-full border rounded-xl p-3 text-xs" placeholder="Nguyễn Văn A | 12A1 | Đoàn viên"></textarea><div class="grid grid-cols-3 gap-2"><label class="text-xs">Chọn ít nhất<input id="round-min-bithu" type="number" min="0" max="100" value="0" class="w-full border rounded-lg p-2"></label><label class="text-xs">Chọn tối đa<input id="round-max-bithu" type="number" min="0" max="100" value="1" class="w-full border rounded-lg p-2"></label><label class="text-xs">Chỉ tiêu<input id="round-quota-bithu" type="number" min="0" max="100" value="1" class="w-full border rounded-lg p-2"></label></div><div class="flex flex-wrap gap-2"><button onclick="saveRoundEditor('bithu')" class="px-3 py-2 bg-sky-600 text-white rounded-lg text-xs font-bold">Lưu danh sách &amp; quy chế</button><button onclick="setRoundStatus('bithu','open')" class="px-3 py-2 bg-emerald-600 text-white rounded-lg text-xs font-bold">Mở vòng</button><button onclick="setRoundStatus('bithu','closed')" class="px-3 py-2 bg-rose-600 text-white rounded-lg text-xs font-bold">Đóng vòng</button></div></div></details><div class="flex flex-wrap gap-2"><button onclick="exportServerBackup()" class="px-3 py-2 bg-slate-900 text-white rounded-lg text-xs">Xuất báo cáo &amp; nhật ký máy chủ</button><button onclick="exportLegacyBackup()" class="px-3 py-2 bg-slate-100 rounded-lg text-xs">Sao lưu dữ liệu trình duyệt cũ</button></div></div><div id="admin-card-drive" class="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 space-y-4">
+          <div class="bg-white rounded-2xl border border-sky-200 shadow-sm p-5 space-y-4 mb-5"><h3 class="text-base font-extrabold text-slate-900">Điều hành máy chủ — phiên bản 2.2</h3><p class="text-xs text-slate-600">Nhập danh sách thật và duyệt quy chế trước khi mở vòng. Danh sách và giới hạn chọn bị khóa sau khi nhận phiếu đầu tiên. Kết quả tổng hợp dành cho BCH và quản trị; việc công nhận kết quả theo quy chế do Ban kiểm phiếu duyệt.</p><details class="border border-slate-200 rounded-xl p-3"><summary class="font-bold text-sm cursor-pointer">Ban Chấp hành: <span id="round-status-bch">Chưa kết nối</span></summary><div class="space-y-3 pt-3"><div class="flex flex-wrap gap-2"><button onclick="loadRoundEditor('bch')" class="px-3 py-2 bg-slate-100 rounded-lg text-xs">Nạp từ máy chủ</button><button onclick="seedRoundEditor('bch')" class="px-3 py-2 bg-slate-100 rounded-lg text-xs">Nạp danh sách có sẵn để rà soát</button></div><label for="round-candidates-bch" class="block text-xs font-bold">Mỗi dòng: Họ tên | Chi đoàn | Chức vụ / Giới thiệu</label><textarea id="round-candidates-bch" rows="5" class="w-full border rounded-xl p-3 text-xs" placeholder="Nguyễn Văn A | 12A1 | Đoàn viên"></textarea><div class="grid grid-cols-3 gap-2"><label class="text-xs">Chọn ít nhất<input id="round-min-bch" type="number" min="0" max="100" value="0" class="w-full border rounded-lg p-2"></label><label class="text-xs">Chọn tối đa<input id="round-max-bch" type="number" min="0" max="100" value="1" class="w-full border rounded-lg p-2"></label><label class="text-xs">Chỉ tiêu<input id="round-quota-bch" type="number" min="0" max="100" value="1" class="w-full border rounded-lg p-2"></label></div><div class="flex flex-wrap gap-2"><button onclick="saveRoundEditor('bch')" class="px-3 py-2 bg-sky-600 text-white rounded-lg text-xs font-bold">Lưu danh sách &amp; quy chế</button><button onclick="setRoundStatus('bch','open')" class="px-3 py-2 bg-emerald-600 text-white rounded-lg text-xs font-bold">Mở vòng</button><button onclick="setRoundStatus('bch','closed')" class="px-3 py-2 bg-rose-600 text-white rounded-lg text-xs font-bold">Đóng vòng</button></div></div></details><details class="border border-slate-200 rounded-xl p-3"><summary class="font-bold text-sm cursor-pointer">Bí thư: <span id="round-status-bithu">Chưa kết nối</span></summary><div class="space-y-3 pt-3"><div class="flex flex-wrap gap-2"><button onclick="loadRoundEditor('bithu')" class="px-3 py-2 bg-slate-100 rounded-lg text-xs">Nạp từ máy chủ</button><button onclick="seedRoundEditor('bithu')" class="px-3 py-2 bg-slate-100 rounded-lg text-xs">Nạp danh sách có sẵn để rà soát</button></div><label for="round-candidates-bithu" class="block text-xs font-bold">Mỗi dòng: Họ tên | Chi đoàn | Chức vụ / Giới thiệu</label><textarea id="round-candidates-bithu" rows="5" class="w-full border rounded-xl p-3 text-xs" placeholder="Nguyễn Văn A | 12A1 | Đoàn viên"></textarea><div class="grid grid-cols-3 gap-2"><label class="text-xs">Chọn ít nhất<input id="round-min-bithu" type="number" min="0" max="100" value="0" class="w-full border rounded-lg p-2"></label><label class="text-xs">Chọn tối đa<input id="round-max-bithu" type="number" min="0" max="100" value="1" class="w-full border rounded-lg p-2"></label><label class="text-xs">Chỉ tiêu<input id="round-quota-bithu" type="number" min="0" max="100" value="1" class="w-full border rounded-lg p-2"></label></div><div class="flex flex-wrap gap-2"><button onclick="saveRoundEditor('bithu')" class="px-3 py-2 bg-sky-600 text-white rounded-lg text-xs font-bold">Lưu danh sách &amp; quy chế</button><button onclick="setRoundStatus('bithu','open')" class="px-3 py-2 bg-emerald-600 text-white rounded-lg text-xs font-bold">Mở vòng</button><button onclick="setRoundStatus('bithu','closed')" class="px-3 py-2 bg-rose-600 text-white rounded-lg text-xs font-bold">Đóng vòng</button></div></div></details><div class="flex flex-wrap gap-2"><button onclick="exportServerBackup()" class="px-3 py-2 bg-slate-900 text-white rounded-lg text-xs">Xuất báo cáo &amp; nhật ký máy chủ</button><button onclick="exportLegacyBackup()" class="px-3 py-2 bg-slate-100 rounded-lg text-xs">Sao lưu dữ liệu trình duyệt cũ</button></div></div><div id="admin-card-drive" class="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 space-y-4">
             <div class="flex items-center gap-3 pb-3 border-b border-slate-100">
               <div class="w-9 h-9 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center text-lg">📐</div>
               <div>
@@ -1514,8 +1549,9 @@ body:has(#modal-qr-login.flex) { overflow:hidden; }
     <div id="gate-qr-zoom-url"></div>
   </dialog>
 
-  <script src="assets/page-core-1.js?v=2.1.3"></script>
-<script src="assets/page-core-2.js?v=2.1.3"></script>
-<script src="assets/election.js?v=2.1.3"></script>
+  <script src="assets/page-core-1.js?v=2.2"></script>
+<script src="assets/page-core-2.js?v=2.2"></script>
+<script src="assets/agenda.js?v=2.2"></script>
+<script src="assets/election.js?v=2.2"></script>
 </body>
 </html>
