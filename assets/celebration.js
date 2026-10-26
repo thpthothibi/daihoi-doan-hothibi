@@ -167,6 +167,9 @@ window.createStageCelebration = function (root) {
     root.querySelector('.op-celebration-subtitle')?.remove();
   }
 
+  // Exact display correction requested for this candidate; never rewrite stored names.
+  function displayCandidateName(value){const name=String(value??'').normalize('NFC');return name==='Trần Phương Diễm Thuỳ'?'Trần Phương Diễm Thùy':name;}
+
   function decorate(result) {
     root.classList.add('op-celebrating', 'op-celebration-' + active.round);
     let banner = root.querySelector('.op-celebration-banner');
@@ -199,7 +202,7 @@ window.createStageCelebration = function (root) {
     const winners = new Set(result.winners || []);
     let elected=0;
     for(const [i,row] of [...root.querySelectorAll('.op-result-row')].entries()){
-      const label=row.querySelector('.op-result-name');if(label)label.textContent=String(result.ranked[i]?.name??label.textContent).normalize('NFC');
+      const label=row.querySelector('.op-result-name');if(label)label.textContent=displayCandidateName(result.ranked[i]?.name??label.textContent);
       const yes=winners.has(result.ranked[i]?.id);row.classList.toggle('op-result-elected',yes);row.hidden=!yes;
       if(yes){elected++;const rank=row.querySelector('.op-result-rank');if(!rank.dataset.originalRank)rank.dataset.originalRank=rank.textContent;rank.textContent=String(elected).padStart(2,'0');
         if(!row.querySelector('.op-elected-badge')){const badge=document.createElement('span');badge.className='op-elected-badge';badge.textContent=active.round==='bch'?'TRÚNG CỬ':'CHÚC MỪNG TRÚNG CỬ';row.append(badge);}}
@@ -211,6 +214,7 @@ window.createStageCelebration = function (root) {
   function captureTextRects(){protectedRects=[...root.querySelectorAll('.op-result-name,.op-result-votes,.op-result-rank,.op-result-heading,.op-elected-badge,.op-celebration-subtitle,.op-celebration-banner,.op-stage-hero,.op-stage-toolbar,.op-stage-sync')].map(e=>e.getBoundingClientRect()).filter(r=>r.width>0&&r.height>0);}
   function sync(round, result, mode) {
     updateControls();
+    for(const [i,label] of [...root.querySelectorAll('.op-result-name')].entries())label.textContent=displayCandidateName(result?.ranked?.[i]?.name??label.textContent);
     if (active && (mode !== 'results' || active.key !== key(round, result))) stop();
     if (active) {decorate(result);captureTextRects();}
   }
