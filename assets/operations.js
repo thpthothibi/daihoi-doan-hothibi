@@ -42,11 +42,34 @@ function renderOperations(data){
  if(data.role==='admin'&&!ops.loadedEditors){for(const name of ['bch','bithu'])loadRoundEditor(name);ops.loadedEditors=true;}if(data.role!=='admin')ops.loadedEditors=false;for(const name of ['bch','bithu']){const locked=data.rounds.find(r=>r.name===name)?.status==='open'||data.operations?.[name]?.turnout>0||data.operations?.[name]?.finalized;for(const id of ['op-secret-','op-blank-','op-quorum-','op-sealed-','round-min-','round-max-','round-quota-','round-candidates-']){const el=document.getElementById(id+name);if(el)el.disabled=!!locked;}const current=data.rounds.find(r=>r.name===name);document.getElementById('op-mode-'+name).textContent=current?.config.secretBallot?'Đang lưu: Phiếu kín':'Đang lưu: Công khai';document.getElementById('op-policy-lock-'+name).textContent=data.operations?.[name]?.turnout>0||data.operations?.[name]?.finalized?'Đã nhận phiếu / khóa sổ: không thể đổi chế độ.':locked?'Vòng đang mở: đóng vòng trước khi chỉnh chế độ.':'Có thể chỉnh chế độ. Bấm Lưu danh sách & quy chế để áp dụng.';if(document.getElementById('op-secret-'+name).checked){document.getElementById('op-sealed-'+name).checked=true;document.getElementById('op-sealed-'+name).disabled=true;}}adminQuorum.textContent=quorum.textContent;const activePoll=(data.polls||[]).some(p=>p.status==='open');if(ops.activePoll!==activePoll){ops.activePoll=activePoll;queueMicrotask(scheduleElectionPoll);}pollAdmin.hidden=data.role!=='admin';const signature=JSON.stringify([data.operations,data.rounds,data.polls,data.role,data.results]);if(signature!==ops.signature){ops.signature=signature;renderCommitteeRows();renderPolls();}updateVotingButtons();
  if(!['admin','bch'].includes(data.role)&&committee.open)committee.close();
 }
+function publicationStatus(control){
+ if(control.published)return 'Đã công bố kết quả. Bấm Mở màn hình kết quả để trình chiếu.';
+ if(!control.finalized)return 'Đóng vòng và khóa sổ trước khi duyệt công bố.';
+ const approvals=control.approvals||[];
+ return 'Công bố cần xác nhận của cả Admin và BCH. Admin: '+(approvals.includes('admin')?'đã xác nhận':'chưa xác nhận')+'; BCH: '+(approvals.includes('bch')?'đã xác nhận':'chưa xác nhận')+'. '+(approvals.length?'Đăng nhập bằng tài khoản còn thiếu để xác nhận tiếp.':'Mỗi tài khoản xác nhận một lần.');
+}
+async function approvePublication(name){
+ return runElection(async()=>{
+  const status=document.getElementById('op-publication-status-'+name);
+  if(!confirm('Xác nhận duyệt công bố kết quả '+(name==='bch'?'Ban Chấp hành':'Bí thư')+'? Kết quả hiện sau khi cả Admin và BCH xác nhận.'))return;
+  try{
+   if(status)status.textContent='Đang gửi xác nhận công bố…';
+   const result=await electionRequest('rounds/'+name+'/publish','POST',{});
+   const control=ops.data.operations[name];control.approvals=result.approvals||control.approvals||[];control.published=!!result.published;
+   renderCommitteeRows();
+   showToast(result.published?'Đã công bố kết quả lên màn hình hội trường.':'Đã ghi nhận xác nhận. Còn chờ tài khoản '+(control.approvals.includes('admin')?'BCH':'Admin')+' xác nhận.','success');
+   try{await refreshElection();}catch(e){const message=document.getElementById('op-publication-status-'+name);if(message)message.textContent=publicationStatus(control)+' Chưa tải lại được trạng thái: '+e.message;}
+  }catch(e){const message=document.getElementById('op-publication-status-'+name);if(message)message.textContent='Không công bố được: '+e.message;showToast(e.message,'error');}
+ });
+}
 function renderCommitteeRows(){
  committeeRows.replaceChildren();for(const name of ['bch','bithu']){
   const control=ops.data.operations?.[name];if(!control)continue;const card=opNode('div','op-card');card.append(opNode('h3','',name==='bch'?'Ban Chấp hành':'Bí thư'),opNode('p','',`Thu về: ${control.turnout}/${control.issued} · ${control.secretBallot?'Phiếu kín':'Thông thường'} · ${control.finalized?'Đã khóa sổ':'Chưa khóa sổ'} · ${control.published?'Đã công bố':'Chưa công bố'}`));
   const seal=opButton('Khóa sổ & lập biên bản',()=>runElection(async()=>{if(!confirm('Khóa sổ '+name+'? Sau thao tác này không thể mở lại vòng.'))return;await electionRequest('rounds/'+name+'/seal','POST',{chair:document.getElementById('op-chair').value,secretary:document.getElementById('op-secretary').value,location:document.getElementById('op-location').value,members:document.getElementById('op-members').value.split('\n').filter(x=>x.trim())});await refreshElection();}));seal.disabled=control.finalized||election.rounds.find(r=>r.name===name)?.status!=='closed';card.append(seal);
-  const publish=opButton('Công bố lên màn hình',()=>runElection(async()=>{if(!confirm('Công bố kết quả '+name+' cho đại biểu và màn hình hội trường?'))return;await electionRequest('rounds/'+name+'/publish','POST',{});await refreshElection();}));publish.disabled=!control.finalized||control.published;card.append(publish);
+  const approved=(control.approvals||[]).includes(election.role);
+  const publish=opButton(control.published?'Đã công bố':approved?'Đã xác nhận · chờ tài khoản còn lại':'Xác nhận công bố ('+(election.role==='admin'?'Admin':'BCH')+')',()=>approvePublication(name));publish.id='op-publish-'+name;publish.disabled=!control.finalized||control.published||approved;card.append(publish);
+  const publication=opNode('p','op-vote-note',publicationStatus(control));publication.id='op-publication-status-'+name;publication.setAttribute('role','status');publication.setAttribute('aria-live','polite');card.append(publication);
+  if(control.published){const screen=opNode('a','op-button','Mở màn hình kết quả');const url=new URL(location.href);url.searchParams.set('stage','results');screen.href=url.href;screen.target='_blank';screen.rel='noopener';card.append(screen);}
   const preview=opButton('Xem biên bản khóa sổ',()=>runElection(async()=>{const {report}=await electionRequest('rounds/'+name+'/report');const wrap=opNode('div','op-report-preview');wrap.append(reportDom(report));card.append(wrap);}));preview.disabled=!control.finalized;card.append(preview);
   for(const [label,kind] of [['Xuất Word (.docx)','word'],['In / Lưu PDF','pdf']]){const button=opButton(label,()=>exportScrutinyReport(name,kind));button.disabled=!control.finalized;card.append(button);}
   if(!control.secretBallot){const detail=opButton('Xem phiếu thông thường',()=>runElection(async()=>{const result=await electionRequest('rounds/'+name+'/ballots');const area=opNode('pre','op-pre');area.textContent=result.ballots.map(row=>row.code+' · '+row.name+': '+row.selections.map(id=>election.rounds.find(r=>r.name===name)?.config.candidates.find(c=>c.id===id)?.name||id).join(', ')).join('\n')||'Chưa có phiếu';card.append(area);}));detail.disabled=!control.finalized;card.append(detail);}

@@ -131,7 +131,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
         bchElectedQuota: 11,
         bchMaxSelectAllowed: 13,
         driveLoadMode: "CACHE",
-        driveFolderId: "1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms"
+        driveFolderId: ""
       },
       candidatesBch: [],
       candidatesBiThu: [],
@@ -719,7 +719,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
       if (badgeBch) badgeBch.textContent = `Đang chọn: ${selectedCount}/${state.candidatesBch.length}`;
 
       document.getElementById("bch-footer-summary").textContent =
-        `Tín nhiệm: ${selectedCount}/${state.candidatesBch.length} • Gạch tên: ${unselectedCount}`;
+        `Tín nhiệm: ${selectedCount}/${state.candidatesBch.length} • Chưa chọn: ${unselectedCount}`;
 
       const votedBanner = document.getElementById("bch-already-voted-banner");
       const submitBtn = document.getElementById("btn-submit-bch-ballot");
@@ -828,7 +828,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
             <div class="min-w-0">
               <div class="flex items-center gap-2 flex-wrap">
                 <span class="px-2 py-0.5 rounded text-[10px] font-bold ${isSelected ? 'bg-sky-600 text-white' : 'bg-rose-100 text-rose-700'}">
-                  ${isSelected ? '✓ Đang chọn (Tín nhiệm)' : '✕ Đã bỏ chọn (Gạch tên)'}
+                  ${isSelected ? '✓ Đang chọn (Tín nhiệm)' : 'Chưa chọn'}
                 </span>
                 <span class="text-[11px] font-bold text-slate-400">#0${idx + 1}</span>
               </div>
@@ -852,7 +852,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
           ? `✓ Đại biểu ${voter.code} đã nộp phiếu bầu Bí thư (${selectedCount}/${totalCount})`
           : (selectedNames.length > 0
               ? `Đang chọn (${selectedCount}/${totalCount}): ${selectedNames.join(", ")}`
-              : `Đã gạch tên tất cả (${unselectedCount}/${totalCount}) — Bấm vào thẻ để chọn lại`);
+              : `Chưa chọn ứng viên nào (0/${totalCount}) — Bấm vào từng người muốn bầu`);
     }
 
 

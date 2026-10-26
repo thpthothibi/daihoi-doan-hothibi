@@ -32,7 +32,7 @@
       opacity: 0.72;
     }
     .strikethrough-name {
-      text-decoration: line-through;
+      text-decoration: none;
       text-decoration-color: #ef4444;
       text-decoration-thickness: 2px;
       color: #64748b;
@@ -535,13 +535,13 @@ body:has(#modal-qr-login.flex) { overflow:hidden; }
           <!-- Minimalist Counter Bar -->
           <div class="flex flex-wrap items-center justify-between gap-2 bg-slate-50 px-3.5 py-2.5 rounded-xl border border-slate-200">
             <div class="flex items-center gap-3 text-xs sm:text-sm">
-              <span class="font-bold text-slate-700">Tín nhiệm: <strong id="count-bch-selected" class="text-sky-600 text-base">13</strong>/<span data-bch-total>0</span></span>
+              <span class="font-bold text-slate-700">Tín nhiệm: <strong id="count-bch-selected" class="text-sky-600 text-base">0</strong>/<span data-bch-total>0</span></span>
               <span class="text-slate-300">|</span>
-              <span class="font-bold text-slate-700">Gạch tên: <strong id="count-bch-unselected" class="text-rose-600 text-base">0</strong></span>
+              <span class="font-bold text-slate-700">Chưa chọn: <strong id="count-bch-unselected" class="text-rose-600 text-base">0</strong></span>
             </div>
             <div class="flex items-center gap-2">
               <button onclick="resetBchAllSelected()" class="px-2.5 py-1 rounded-lg bg-white border border-slate-300 hover:bg-slate-100 text-slate-700 text-xs font-semibold transition">
-                Chọn lại tất cả
+                Bỏ chọn tất cả
               </button>
               <span id="bch-already-voted-banner" class="hidden px-2.5 py-1 rounded-lg bg-emerald-100 text-emerald-800 text-xs font-bold">
                 ✓ Đã nộp phiếu
@@ -549,7 +549,7 @@ body:has(#modal-qr-login.flex) { overflow:hidden; }
             </div>
           </div>
 
-          <p class="text-xs text-slate-600">Mặc định chọn tất cả. Bấm vào ứng viên để bỏ chọn; bấm lại để chọn lại.</p>
+          <p class="text-xs text-slate-600">Ban đầu chưa chọn ai. Bấm vào từng ứng viên muốn bầu; bấm lại để bỏ chọn.</p>
           <!-- Candidates Compact Grid -->
           <div id="bch-candidates-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5"></div>
 
@@ -582,18 +582,18 @@ body:has(#modal-qr-login.flex) { overflow:hidden; }
               <div class="flex items-center gap-3 text-xs sm:text-sm">
                 <span class="font-bold text-slate-800">Đang chọn (Tín nhiệm): <strong id="count-bithu-selected" class="text-sky-600 text-base">2</strong>/<span id="count-bithu-total">2</span></span>
                 <span class="text-slate-300">|</span>
-                <span class="font-bold text-slate-800">Bỏ chọn (Gạch tên): <strong id="count-bithu-unselected" class="text-rose-600 text-base">0</strong></span>
+                <span class="font-bold text-slate-800">Chưa chọn: <strong id="count-bithu-unselected" class="text-rose-600 text-base">0</strong></span>
               </div>
               <div class="flex items-center gap-2">
                 <button onclick="resetBiThuAllSelected()" class="px-2.5 py-1 rounded-lg bg-white border border-amber-300 hover:bg-amber-100 text-slate-800 text-xs font-semibold transition">
-                  Chọn lại tất cả
+                  Bỏ chọn tất cả
                 </button>
                 
               </div>
             </div>
 
             <div class="text-xs text-slate-600 bg-slate-50 px-3.5 py-2 rounded-xl border border-slate-200 flex items-center justify-between">
-              <span>💡 <strong>Mặc định là Chọn (Tín nhiệm)</strong>. Bấm vào thẻ ứng viên để <strong>Bỏ chọn (Gạch tên)</strong>, bấm lại để Chọn lại.</span>
+              <span>💡 <strong>Ban đầu chưa chọn ai</strong>. Bấm vào từng ứng viên muốn bầu; bấm lại để bỏ chọn.</span>
               <span id="bithu-already-voted-banner" class="hidden px-2.5 py-0.5 rounded-lg bg-emerald-100 text-emerald-800 font-bold shrink-0">✓ Đã nộp phiếu</span>
             </div>
 
@@ -1433,7 +1433,7 @@ body:has(#modal-qr-login.flex) { overflow:hidden; }
           <div class="text-sky-800 mt-0.5">Đồng ý tín nhiệm: <strong id="modal-bch-keep-count">13</strong> / <span data-bch-total>0</span> đồng chí</div>
         </div>
         <div>
-          <div class="font-bold text-rose-700 mb-1">Ứng viên đã gạch tên (bỏ chọn):</div>
+          <div class="font-bold text-rose-700 mb-1">Ứng viên không được chọn:</div>
           <div id="modal-bch-unselected-list" class="p-3 rounded-xl bg-slate-50 border border-slate-200 text-slate-700 max-h-32 overflow-y-auto"></div>
         </div>
       </div>
@@ -1535,11 +1535,11 @@ body:has(#modal-qr-login.flex) { overflow:hidden; }
     <div id="gate-qr-zoom-url"></div>
   </dialog>
 
-  <script src="assets/page-core-1.js?v=3.0.2"></script>
+  <script src="assets/page-core-1.js?v=3.1.8-ballot"></script>
 <script src="assets/page-core-2.js?v=3.0.2"></script>
 <script src="assets/agenda.js?v=3.0.2"></script>
-<script src="assets/operations.js?v=3.1.5-live"></script>
-<script src="assets/election.js?v=3.1.7-simple"></script>
+<script src="assets/operations.js?v=3.1.8-ballot"></script>
+<script src="assets/election.js?v=3.1.8-ballot"></script>
 <script src="assets/reset-admin.js?v=3.1.1-reset"></script>
 <script src="assets/roster-admin.js?v=3.1.3-ui"></script>
 <script src="assets/poll-admin.js?v=3.1.4-polls"></script>

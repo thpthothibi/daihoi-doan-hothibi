@@ -21,7 +21,7 @@ function initializeElectionDrafts(){
  const voter=getCurrentVoter();election.draftKeys??={};
  for(const [round,candidates,key,voted] of [['bch',state.candidatesBch,'bchDraftSelectedIds','votedBch'],['bithu',state.candidatesBiThu,'biThuDraftSelectedIds','votedBiThu']]){
   const identity=JSON.stringify([election.role,voter.code,candidates]);
-  if(election.draftKeys[round]!==identity){state[key]=new Set(election.role==='delegate'&&!voter[voted]?candidates.map(c=>c.id):[]);election.draftKeys[round]=identity;}
+  if(election.draftKeys[round]!==identity){state[key]=new Set();election.draftKeys[round]=identity;}
  }
 }
 function applyElection(data){
@@ -106,8 +106,8 @@ function confirmSubmitBchBallot(){return submitServerBallot('bch');}
 function submitBiThuBallot(){try{validDraft('bithu');if(!confirm('Xác nhận nộp phiếu Bí thư? Sau khi máy chủ nhận, phiếu không thể sửa.'))return;}catch(e){showToast(e.message,'error');return;}return submitServerBallot('bithu');}
 function openConfirmBchModal(){try{validDraft('bch');if(getCurrentVoter().votedBch)throw new Error('Đã nộp phiếu BCH.');document.getElementById('modal-bch-voter-name').textContent=election.rounds.find(r=>r.name==='bch')?.config.secretBallot?'Đại biểu đã xác thực — phiếu kín':getCurrentVoter().name;document.getElementById('modal-bch-keep-count').textContent=state.bchDraftSelectedIds.size;document.getElementById('modal-bch-unselected-list').textContent=state.candidatesBch.filter(c=>!state.bchDraftSelectedIds.has(c.id)).map(c=>c.name).join(', ')||'Không có';document.getElementById('modal-confirm-bch').classList.remove('hidden');document.getElementById('modal-confirm-bch').classList.add('flex');}catch(e){showToast(e.message,'warning');}}
 function unlockBiThuTab(){refreshElection().catch(e=>showToast(e.message,'error'));}
-function resetBchAllSelected(){if(getCurrentVoter().votedBch)return;state.bchDraftSelectedIds=new Set(state.candidatesBch.map(c=>c.id));renderBchVotingGrid();}
-function resetBiThuAllSelected(){if(getCurrentVoter().votedBiThu)return;state.biThuDraftSelectedIds=new Set(state.candidatesBiThu.map(c=>c.id));renderBiThuVotingSection();}
+function resetBchAllSelected(){if(getCurrentVoter().votedBch)return;state.bchDraftSelectedIds=new Set();renderBchVotingGrid();}
+function resetBiThuAllSelected(){if(getCurrentVoter().votedBiThu)return;state.biThuDraftSelectedIds=new Set();renderBiThuVotingSection();}
 function selectBiThuCandidate(id){if(getCurrentVoter().votedBiThu)return;const set=state.biThuDraftSelectedIds;if(set.has(id))set.delete(id);else set.add(id);renderBiThuVotingSection();}
 function toggleBchCandidate(id){if(getCurrentVoter().votedBch)return;const set=state.bchDraftSelectedIds;if(set.has(id))set.delete(id);else set.add(id);renderBchVotingGrid();}
 function computeElectionTally(){
