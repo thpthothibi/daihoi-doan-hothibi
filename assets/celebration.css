@@ -39,3 +39,20 @@
 @keyframes op-floor-glow{from{opacity:.4}to{opacity:1}}
 @media(prefers-reduced-motion:reduce){.op-celebration-layer *,.op-celebration-layer:after{animation:none!important}}
 @media(max-width:767px){.op-celebration-beam{filter:blur(12px)}.op-celebration-stars i:nth-child(n+30){display:none}}
+/* Metallic text, moving stage aurora, card sweep and progress shimmer from the supplied template. */
+.op-stage{--celeb-gold:#ffd56b;--celeb-blue:#38bdf8}
+.op-celebration-moving .op-celebration-banner strong{background:linear-gradient(90deg,#f6c453,#fff6cc 25%,#ffd15c 50%,#fff9db 75%,#f6c453);background-size:200% auto;background-clip:text;-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:op-gold-shimmer 3.2s linear infinite,op-banner-float 2.8s ease-in-out infinite alternate;filter:drop-shadow(0 0 12px #ffd15c55);text-shadow:none}
+.op-celebrating .op-result-card{position:relative;isolation:isolate}
+.op-celebrating .op-result-card:after{content:'';position:absolute;inset:0;border-radius:inherit;pointer-events:none;background:linear-gradient(115deg,transparent 30%,#ffffff02 42%,#ffe6911c 50%,#38bdf814 58%,transparent 70%);background-size:300% 100%;opacity:0}
+.op-celebration-moving .op-result-card:after{opacity:1;animation:op-card-shimmer 4.5s cubic-bezier(.4,0,.2,1) infinite}
+.op-celebration-moving .op-result-track>div{background:linear-gradient(90deg,#0ea5e9,#38bdf8,#bae6fd,#38bdf8,#0ea5e9);background-size:200% 100%;animation:op-progress-shimmer 2.2s linear infinite;box-shadow:0 0 10px #38bdf866}
+.op-celebration-moving .op-celebrate-button{animation:op-button-glow 2.2s ease-in-out infinite alternate}
+.op-celebration-moving .op-celebration-layer:before{content:'';position:absolute;inset:-15%;background:radial-gradient(ellipse at 18% 20%,#38bdf829,transparent 48%),radial-gradient(ellipse at 83% 22%,#ffd56b33,transparent 46%),radial-gradient(ellipse at 50% 90%,#ffd56b20,transparent 40%);filter:blur(32px);animation:op-aurora-sweep 9s ease-in-out infinite alternate;pointer-events:none}
+@keyframes op-aurora-sweep{from{transform:translate(-3%,-1%) rotate(-3deg);opacity:.6}to{transform:translate(3%,2%) rotate(3deg);opacity:1}}
+@keyframes op-gold-shimmer{to{background-position:200% center}}
+@keyframes op-banner-float{from{transform:translateY(0)}to{transform:translateY(-3px)}}
+@keyframes op-card-shimmer{0%{background-position:120% 50%}60%,100%{background-position:-60% 50%}}
+@keyframes op-progress-shimmer{to{background-position:200% 50%}}
+@keyframes op-button-glow{from{box-shadow:0 0 10px #ffd56b33}to{box-shadow:0 0 22px #ffd56b88}}
+@media(prefers-reduced-motion:reduce){.op-celebrating *,.op-celebrating *:before,.op-celebrating *:after{animation:none!important}.op-celebration-banner strong{-webkit-text-fill-color:initial;background:none}}
+.op-celebration-layer{contain:paint}.op-celebration-layer canvas{transform:translateZ(0);will-change:transform}.op-celebration-moving .op-celebration-beam,.op-celebration-moving .op-celebration-ribbon{will-change:transform,opacity}
