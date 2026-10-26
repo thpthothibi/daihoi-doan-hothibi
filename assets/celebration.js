@@ -199,6 +199,7 @@ window.createStageCelebration = function (root) {
     const winners = new Set(result.winners || []);
     let elected=0;
     for(const [i,row] of [...root.querySelectorAll('.op-result-row')].entries()){
+      const label=row.querySelector('.op-result-name');if(label)label.textContent=String(result.ranked[i]?.name??label.textContent).normalize('NFC');
       const yes=winners.has(result.ranked[i]?.id);row.classList.toggle('op-result-elected',yes);row.hidden=!yes;
       if(yes){elected++;const rank=row.querySelector('.op-result-rank');if(!rank.dataset.originalRank)rank.dataset.originalRank=rank.textContent;rank.textContent=String(elected).padStart(2,'0');
         if(!row.querySelector('.op-elected-badge')){const badge=document.createElement('span');badge.className='op-elected-badge';badge.textContent=active.round==='bch'?'TRÚNG CỬ':'CHÚC MỪNG TRÚNG CỬ';row.append(badge);}}
