@@ -2,9 +2,11 @@
 (() => {
  'use strict';
  let backup=null,busy=false,focus;
- const modal=document.createElement('div');modal.hidden=true;
- modal.style.cssText='position:fixed;inset:0;z-index:10001;padding:16px;background:#0f172acc;overflow:auto;align-items:center;justify-content:center';
- modal.innerHTML=`<form role="dialog" aria-modal="true" aria-labelledby="roster-delete-title" style="background:white;color:#0f172a;width:100%;max-width:560px;padding:24px;border-radius:16px;box-sizing:border-box;margin:auto">
+ if(document.getElementById('admin-roster-delete-dialog'))return;
+ const modal=document.createElement('dialog');modal.id='admin-roster-delete-dialog';
+ modal.setAttribute('aria-labelledby','roster-delete-title');
+ const css=document.createElement('style');css.textContent='#admin-roster-delete-dialog{width:min(560px,calc(100vw - 24px));max-height:calc(100dvh - 32px);margin:auto;border:0;border-radius:16px;padding:0;overflow:auto;background:white;color:#0f172a;box-shadow:0 24px 80px #02061766}#admin-roster-delete-dialog::backdrop{background:#0f172acc}#admin-roster-delete-actions{display:flex;flex-wrap:wrap;gap:8px;width:100%;min-width:0;margin-top:12px}#admin-delete-all-delegates{display:block;max-width:100%;min-height:44px;padding:10px 14px;border:1px solid #e11d48;border-radius:9px;background:#fff1f2;color:#9f1239;font-size:12px;line-height:1.5;font-weight:700;white-space:normal;text-align:center;cursor:pointer}#admin-delete-all-delegates[hidden]{display:none}';document.head.append(css);
+ modal.innerHTML=`<form style="background:white;color:#0f172a;width:100%;max-width:560px;padding:24px;border-radius:16px;box-sizing:border-box;margin:auto">
  <h2 id="roster-delete-title" style="font-size:20px;font-weight:800;margin:0 0 12px">Xóa toàn bộ danh sách đại biểu</h2>
  <p style="background:#fff1f2;padding:12px;border-radius:10px">Xóa tất cả đại biểu đã import, mã kích hoạt, điểm danh và phiên đăng nhập đại biểu. Bạn có thể import lại danh sách mới sau đó.</p>
  <p>Giữ tài khoản admin/BCH, ứng viên, quy chế, chương trình và văn kiện. Nếu còn phiếu bầu, hệ thống sẽ chặn thao tác này.</p>
@@ -20,9 +22,9 @@
  document.body.append(modal);
  const el=id=>modal.querySelector('#'+id),message=text=>{el('roster-message').textContent=text;};
  function update(){el('roster-submit').disabled=busy||!backup||!el('roster-saved').checked||!el('roster-password').value||el('roster-confirm').value!=='XOA TOAN BO DAI BIEU';el('roster-cancel').disabled=busy;el('roster-backup').disabled=busy;}
- function close(){if(busy)return;modal.hidden=true;modal.style.display='none';modal.querySelector('form').reset();backup=null;focus?.focus();}
- function open(){if(election.role!=='admin'||busy)return;focus=document.activeElement;backup=null;modal.querySelector('form').reset();message('Đóng hai vòng và xóa phiếu thử trước nếu đã có người bầu.');update();modal.hidden=false;modal.style.display='flex';el('roster-backup').focus();}
- el('roster-cancel').onclick=close;modal.addEventListener('input',update);
+ function close(){if(busy)return;modal.close();modal.querySelector('form').reset();backup=null;focus?.focus();}
+ function open(){if(election.role!=='admin'||busy)return;focus=document.activeElement;backup=null;modal.querySelector('form').reset();message('Đóng hai vòng và xóa phiếu thử trước nếu đã có người bầu.');update();if(!modal.open)modal.showModal();el('roster-backup').focus();}
+ el('roster-cancel').onclick=close;modal.addEventListener('input',update);modal.addEventListener('change',update);modal.addEventListener('cancel',event=>{event.preventDefault();close();});
  modal.onkeydown=event=>{if(event.key==='Escape')close();if(event.key==='Tab'){const inputs=[...modal.querySelectorAll('input,button')].filter(x=>!x.disabled);const first=inputs[0],last=inputs.at(-1);if(event.shiftKey&&document.activeElement===first){event.preventDefault();last.focus();}else if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first.focus();}}};
  el('roster-backup').onclick=async()=>{
   if(busy)return;busy=true;backup=null;el('roster-saved').checked=false;update();message('Đang kiểm tra dữ liệu và tạo bản sao lưu…');
@@ -43,8 +45,8 @@
  };
  function mount(){let button=document.getElementById('admin-delete-all-delegates');
   if(!button){const anchor=document.querySelector('[onclick="importDelegatesFromExcelFile()"]');if(!anchor)return;
-   button=document.createElement('button');button.id='admin-delete-all-delegates';button.type='button';button.textContent='Xóa toàn bộ danh sách đại biểu';button.style.cssText='padding:10px 14px;border:1px solid #e11d48;border-radius:9px;background:#fff1f2;color:#9f1239;font-size:12px;font-weight:700';button.onclick=open;anchor.parentElement.append(button);
-  }button.hidden=election.role!=='admin';
+   button=document.createElement('button');button.id='admin-delete-all-delegates';button.type='button';button.textContent='Xóa toàn bộ danh sách đại biểu';const row=document.createElement('div');row.id='admin-roster-delete-actions';row.append(button);anchor.parentElement.after(row);
+  }button.onclick=event=>{event.preventDefault();event.stopPropagation();try{open();}catch(error){showToast('Không mở được hộp xóa đại biểu: '+error.message,'error');}};button.hidden=election.role!=='admin';
  }
  const previous=renderRolePermissions;renderRolePermissions=function(...args){const result=previous.apply(this,args);mount();return result;};mount();
 })();
