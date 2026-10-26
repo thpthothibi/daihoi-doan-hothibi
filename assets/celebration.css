@@ -1,81 +1,125 @@
+/* Animated ceremonial stage. Only active during operator-started congratulations. */
 .op-stage{isolation:isolate}.op-stage-toolbar,.op-stage-sync,#op-stage-body{position:relative;z-index:2}
-.op-celebration-layer{position:absolute;inset:0;z-index:0;overflow:hidden;pointer-events:none;display:none;background:url('./celebration-lights.svg') center/100% 100% no-repeat}
-.op-celebrating .op-celebration-layer{display:block}.op-celebration-layer:after{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 100%,#eabb5926,transparent 48%);pointer-events:none}
-.op-celebration-bithu .op-celebration-layer{background-image:url('./celebration-fireworks.svg'),url('./celebration-lights.svg')}
-.op-celebration-layer canvas{position:absolute;inset:0;width:100%;height:100%}.op-celebration-beam{display:none}
-.op-celebration-stars i{position:absolute;width:3px;height:3px;border-radius:50%;background:#fff0c1;box-shadow:0 0 10px 3px #ffd86aaa;opacity:.6}
-.op-celebration-moving .op-celebration-stars i{animation:op-star 2.8s ease-in-out 4}
-.op-celebration-banner{display:flex;align-items:center;justify-content:center;gap:14px;flex-shrink:0;position:relative;padding:4px 0 13px;text-align:center;min-height:54px}
-.op-celebration-banner:after{content:'★';position:absolute;bottom:0;left:12%;right:12%;height:10px;color:#f6d778;font-size:15px;line-height:10px;background:linear-gradient(90deg,transparent,#edce77 38%,transparent 43%,transparent 57%,#edce77 62%,transparent) center/100% 1px no-repeat}
-.op-celebration-banner strong{font-size:clamp(18px,3.4vh,38px);line-height:1.12;font-weight:900;color:#ffdf82;text-shadow:0 2px 1px #5b411d,0 0 18px #f6ce6b66;letter-spacing:.01em}
-.op-celebration-banner svg{width:34px;height:58px;flex-shrink:0}.op-celebration-banner svg:last-child{transform:scaleX(-1)}
-.op-celebrating #op-stage-body{gap:6px}.op-celebrating .op-stage-hero{gap:10px}.op-celebrating .op-stage-hero h1{font-size:clamp(22px,3.2vh,36px)}
-.op-celebrating .op-result-card{width:88%;margin:0 auto;border:1px solid #f5d477;box-shadow:0 0 8px #ffda7b99,0 0 26px #efc66c33,inset 0 0 22px #f4c76a09;background:linear-gradient(120deg,#123357f5,#0b2340f7);padding:12px 16px}
-.op-celebrating .op-result-heading{margin-bottom:7px}.is-results.op-celebrating .op-result-heading h2{font-size:clamp(17px,2.5vh,27px);color:white;margin:0}
-.op-celebrating .op-result-grid{gap:5px 14px}.op-celebrating .op-result-row{padding:3px 9px;background:#ffffff06}.op-celebrating .op-result-name{font-size:clamp(14px,2.05vh,23px)}.op-celebrating .op-result-votes{font-size:clamp(11px,1.5vh,16px);margin-top:2px}.op-celebrating .op-result-track{height:4px;margin-top:3px}
-.op-celebrating .op-result-elected{border-color:#e9cc7360}.op-stage-toolbar .op-celebrate-button{background:#302b1b;color:#ffe5a0;border-color:#e7c369;box-shadow:0 0 9px #f7cf6433}
-.op-celebration-bithu .op-result-card{width:78%;max-width:1280px;flex:0 1 auto;padding:22px 28px;margin-top:12px;border-color:#7bade1}
-.op-celebration-bithu .op-result-heading{flex-wrap:wrap}.is-results.op-celebration-bithu .op-result-heading h2{font-size:clamp(24px,3.8vh,40px)}
-.op-celebration-bithu .op-result-grid.op-result-single{margin:18px auto 8px;min-height:clamp(140px,22vh,240px)}
-.op-celebration-bithu .op-result-single .op-result-row{padding:22px 30px;border-radius:18px;border-color:#739ac24d;background:#102f50a6}
-.op-celebration-bithu .op-result-single .op-result-name{font-size:clamp(24px,4.8vh,52px)}.op-celebration-bithu .op-result-single .op-result-votes{font-size:clamp(18px,2.8vh,30px);margin-top:8px}.op-celebration-bithu .op-result-single .op-result-track{height:10px;margin-top:18px}
-@keyframes op-star{0%,100%{opacity:.25;transform:scale(.7)}50%{opacity:1;transform:scale(1.7)}}
-@media(min-width:768px) and (max-height:720px){.op-celebrating .op-stage-toolbar .op-button{min-height:32px;padding:5px 9px}.op-celebration-banner{min-height:38px;padding:0 0 9px;gap:8px}.op-celebration-banner svg{height:40px;width:24px}.op-celebration-banner strong{font-size:19px}.op-celebrating .op-result-summary{font-size:12px}.op-celebrating .op-result-row{padding:2px 7px}.op-celebrating .op-stage-logo{width:38px;height:38px}}
-
-@media(max-width:767px){.op-celebration-banner{gap:6px;padding:8px 0 16px}.op-celebration-banner strong{font-size:20px}.op-celebration-banner svg{width:22px;height:44px}.op-celebrating .op-result-card,.op-celebration-bithu .op-result-card{width:96%;padding:14px;margin-top:0}.op-celebration-bithu .op-result-single .op-result-row{padding:16px}.op-celebrating .op-result-row{padding:8px}.op-celebrating .op-result-name{font-size:17px}.op-celebrating .op-result-votes{font-size:13px}.op-celebration-bithu .op-result-single .op-result-name{font-size:25px}.op-celebration-layer{background-size:auto 100%}}
-/* Live motion remains active until Stop or leaving this published round. */
-.op-celebration-moving .op-celebration-stars i{animation:op-star 3.4s ease-in-out infinite}
-.op-celebration-beam{display:block;position:absolute;top:-24%;width:34%;height:132%;opacity:.12;transform-origin:50% 0;background:radial-gradient(ellipse at 50% 12%,#fff5cbbb 0,#f9d78055 17%,#e8bd5414 40%,transparent 65%);filter:blur(22px);pointer-events:none}
-.op-celebration-beam.left{left:-14%;transform:rotate(-20deg)}.op-celebration-beam.right{right:-14%;transform:rotate(20deg)}
-.op-celebration-moving .op-celebration-beam.left{animation:op-soft-beam-left 7s ease-in-out infinite alternate}.op-celebration-moving .op-celebration-beam.right{animation:op-soft-beam-right 8s ease-in-out infinite alternate}
-.op-celebration-ribbon{position:absolute;bottom:-8%;width:125%;height:40%;border-top:2px solid #ffe8a099;border-radius:50%;filter:drop-shadow(0 0 5px #edc464);opacity:.35;pointer-events:none}
-.op-celebration-ribbon.left{left:-28%;transform:rotate(9deg)}.op-celebration-ribbon.right{right:-28%;transform:rotate(-9deg)}
-.op-celebration-moving .op-celebration-ribbon.left{animation:op-ribbon-left 6s ease-in-out infinite alternate}.op-celebration-moving .op-celebration-ribbon.right{animation:op-ribbon-right 7s ease-in-out infinite alternate}
-.op-celebration-moving .op-celebration-layer:after{animation:op-floor-glow 5s ease-in-out infinite alternate}
-@keyframes op-soft-beam-left{from{transform:rotate(-25deg);opacity:.12}to{transform:rotate(3deg);opacity:.3}}
-@keyframes op-soft-beam-right{from{transform:rotate(25deg);opacity:.12}to{transform:rotate(-3deg);opacity:.28}}
-@keyframes op-ribbon-left{from{transform:translateY(0) rotate(9deg);opacity:.25}to{transform:translateY(-20px) rotate(5deg);opacity:.65}}
-@keyframes op-ribbon-right{from{transform:translateY(-15px) rotate(-6deg);opacity:.6}to{transform:translateY(0) rotate(-10deg);opacity:.25}}
-@keyframes op-floor-glow{from{opacity:.4}to{opacity:1}}
-
-@media(max-width:767px){.op-celebration-beam{filter:blur(12px)}.op-celebration-stars i:nth-child(n+30){display:none}}
-/* Metallic text, moving stage aurora, card sweep and progress shimmer from the supplied template. */
-.op-stage{--celeb-gold:#ffd56b;--celeb-blue:#38bdf8}
-.op-celebration-moving .op-celebration-banner strong{background:linear-gradient(90deg,#f6c453,#fff6cc 25%,#ffd15c 50%,#fff9db 75%,#f6c453);background-size:200% auto;background-clip:text;-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:op-gold-shimmer 3.2s linear infinite,op-banner-float 2.8s ease-in-out infinite alternate;filter:drop-shadow(0 0 12px #ffd15c55);text-shadow:none}
-.op-celebrating .op-result-card{position:relative;isolation:isolate}
-.op-celebrating .op-result-card:after{content:'';position:absolute;inset:0;border-radius:inherit;pointer-events:none;background:linear-gradient(115deg,transparent 30%,#ffffff02 42%,#ffe6911c 50%,#38bdf814 58%,transparent 70%);background-size:300% 100%;opacity:0}
-.op-celebration-moving .op-result-card:after{opacity:1;animation:op-card-shimmer 4.5s cubic-bezier(.4,0,.2,1) infinite}
-.op-celebration-moving .op-result-track>div{background:linear-gradient(90deg,#0ea5e9,#38bdf8,#bae6fd,#38bdf8,#0ea5e9);background-size:200% 100%;animation:op-progress-shimmer 2.2s linear infinite;box-shadow:0 0 10px #38bdf866}
-.op-celebration-moving .op-celebrate-button{animation:op-button-glow 2.2s ease-in-out infinite alternate}
-.op-celebration-moving .op-celebration-layer:before{content:'';position:absolute;inset:-15%;background:radial-gradient(ellipse at 18% 20%,#38bdf829,transparent 48%),radial-gradient(ellipse at 83% 22%,#ffd56b33,transparent 46%),radial-gradient(ellipse at 50% 90%,#ffd56b20,transparent 40%);filter:blur(32px);animation:op-aurora-sweep 9s ease-in-out infinite alternate;pointer-events:none}
-@keyframes op-aurora-sweep{from{transform:translate(-3%,-1%) rotate(-3deg);opacity:.6}to{transform:translate(3%,2%) rotate(3deg);opacity:1}}
-@keyframes op-gold-shimmer{to{background-position:200% center}}
-@keyframes op-banner-float{from{transform:translateY(0)}to{transform:translateY(-3px)}}
-@keyframes op-card-shimmer{0%{background-position:120% 50%}60%,100%{background-position:-60% 50%}}
-@keyframes op-progress-shimmer{to{background-position:200% 50%}}
-@keyframes op-button-glow{from{box-shadow:0 0 10px #ffd56b33}to{box-shadow:0 0 22px #ffd56b88}}
-
-.op-celebration-layer{contain:paint}.op-celebration-layer canvas{transform:translateZ(0);will-change:transform}.op-celebration-moving .op-celebration-beam,.op-celebration-moving .op-celebration-ribbon{will-change:transform,opacity}
-
-/* User's supplied warm lighting, with a separate foreground canvas for visible desktop particles. */
-.op-celebration-layer{position:fixed;inset:0;pointer-events:none;z-index:0}
-.op-celebration-foreground{position:fixed;inset:0;z-index:3;pointer-events:none;overflow:hidden;display:none;contain:paint}
-.op-celebration-foreground canvas{position:absolute;inset:0;width:100%;height:100%;display:block;transform:translateZ(0);will-change:transform;opacity:.9}
-.op-celebrating .op-celebration-foreground{display:block}
 .op-stage-toolbar,.op-stage-sync{z-index:5}.op-stage:not(.is-results) .op-celebration-control{display:none}
-.op-celebration-beam{position:absolute;top:-18%;width:58vw;height:95vh;opacity:0;filter:blur(42px);mix-blend-mode:screen;transition:opacity .5s ease;transform-origin:center}
-.op-celebration-beam.left{left:-14%;background:radial-gradient(circle at 18% 18%,#ffe08285,#ffc1072e 42%,transparent 72%),conic-gradient(from 125deg at 10% 10%,transparent 0deg,#ffd56a47 32deg,transparent 68deg)}
-.op-celebration-beam.right{right:-14%;background:radial-gradient(circle at 82% 28%,#ffd56a73,#38bdf833 48%,transparent 74%),conic-gradient(from 200deg at 90% 12%,transparent 0deg,#38bdf83d 30deg,#ffd56a40 55deg,transparent 85deg)}
-.op-celebrating .op-celebration-beam{opacity:1}
-.op-celebration-moving .op-celebration-beam.left{animation:opBeamSweepLeft 6.5s ease-in-out infinite alternate}
-.op-celebration-moving .op-celebration-beam.right{animation:opBeamSweepRight 7.2s ease-in-out infinite alternate}
-@keyframes opBeamSweepLeft{from{transform:translate(-2%,-2%) rotate(-4deg) scale(1)}to{transform:translate(4%,3%) rotate(5deg) scale(1.08)}}
-@keyframes opBeamSweepRight{from{transform:translate(2%,2%) rotate(4deg) scale(1)}to{transform:translate(-4%,-2%) rotate(-5deg) scale(1.08)}}
-.op-celebration-stars i{width:5px;height:5px;background:#fff6c2;box-shadow:0 0 12px 3px #ffd56ad9}
-.op-celebration-moving .op-celebration-stars i{animation:opStarTwinkle 1.8s ease-in-out infinite alternate}
-@keyframes opStarTwinkle{from{opacity:.15;transform:scale(.6)}to{opacity:.95;transform:scale(1.35)}}
-.op-celebration-banner svg{filter:drop-shadow(0 0 12px #ffd56a99)}
-.op-celebrating .op-result-card{border:1.5px solid #ffe082c7!important;box-shadow:0 0 32px #ffd56a52,0 0 68px #38bdf833,inset 0 0 28px #ffd56a24!important;overflow:hidden}
-.op-celebrating .op-result-row.op-result-elected{border-color:#ffdc78b8!important;background:linear-gradient(135deg,#143460db,#0c2040e0)!important;box-shadow:0 0 24px #ffd56a3d,inset 0 0 18px #ffd56a1a}
-.op-celebrating .op-result-row.op-result-elected .op-result-track>div{box-shadow:0 0 16px #38bdf8b3}
-@media(prefers-reduced-motion:reduce){.op-stage:not(.op-force-motion) .op-celebration-layer *,.op-stage:not(.op-force-motion) .op-celebration-layer:before,.op-stage:not(.op-force-motion) .op-celebration-layer:after,.op-stage:not(.op-force-motion) .op-celebration-banner *,.op-stage:not(.op-force-motion) .op-result-card:after,.op-stage:not(.op-force-motion) .op-result-track>div,.op-stage:not(.op-force-motion) .op-celebrate-button{animation:none!important}.op-stage:not(.op-force-motion) .op-celebration-foreground{display:none}.op-stage:not(.op-force-motion) .op-celebration-banner strong{-webkit-text-fill-color:initial;background:none}}
+.op-celebration-layer,.op-celebration-foreground{display:none;position:fixed;inset:0;overflow:hidden;pointer-events:none;contain:paint}
+.op-celebration-layer{z-index:0}.op-celebration-foreground{z-index:3}.op-celebrating .op-celebration-layer,.op-celebrating .op-celebration-foreground{display:block}
+.op-celebration-foreground canvas{width:100%;height:100%;display:block;opacity:.9}
+.op-stage.is-results.op-celebrating{background:radial-gradient(ellipse at 50% 100%,#17619d35,transparent 52%),radial-gradient(ellipse at 50% 20%,#132e54,#030b1c 78%);padding:12px 3vw 18px}
+.op-cinematic-scenery{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 100%,#f8ce6c20,transparent 40%)}
+.op-cinematic-curtain{position:absolute;top:0;bottom:0;width:13%;background:repeating-linear-gradient(90deg,#020713aa,#1c417057 12%,#040e2577 25%,#ae82442b 27%,#071328 30%);border-inline:1px solid #cfa9564d;opacity:.85}
+.op-cinematic-curtain.left{left:0}.op-cinematic-curtain.right{right:0;transform:scaleX(-1)}
+.op-cinematic-floor{position:absolute;bottom:-21%;left:6%;width:88%;height:35%;border-radius:50%;background:repeating-radial-gradient(ellipse at center,#040c20 0 16px,#dfbd6866 17px,#fce5a388 18px,#071a34 20px 40px);box-shadow:0 -4px 20px #e6c16744,0 -1px 1px #fff0ac;transform:perspective(450px) rotateX(25deg)}
+.op-cinematic-orbit{position:absolute;bottom:2%;left:8%;width:84%;height:12%;border-radius:50%;border:1px solid #f6d77a70;box-shadow:0 0 20px #ffd56a33,inset 0 0 10px #38bdf844}
+.op-cinematic-ray{position:absolute;top:-5%;width:9%;height:100%;transform-origin:50% 0;background:linear-gradient(180deg,#fff4ca99,#ffe39d25 28%,transparent 80%);clip-path:polygon(46% 0,54% 0,100% 100%,0 100%);filter:blur(3px);opacity:.35;transform:rotate(calc((var(--ray) - 2.5)*9deg))}
+.op-celebration-moving .op-cinematic-ray{animation:opRay 8s ease-in-out infinite alternate;animation-delay:calc(var(--ray)*-.9s)}
+@keyframes opRay{from{transform:rotate(calc((var(--ray) - 2.5)*9deg - 9deg));opacity:.2}to{transform:rotate(calc((var(--ray) - 2.5)*9deg + 9deg));opacity:.52}}
+.op-celebration-beam{position:absolute;top:-15%;width:52%;height:110%;filter:blur(32px);mix-blend-mode:screen;background:radial-gradient(ellipse at 50% 0,#ffe8a86b,transparent 64%);transform-origin:top center}
+.op-celebration-beam.left{left:-24%;transform:rotate(-12deg)}.op-celebration-beam.right{right:-24%;transform:rotate(12deg)}
+.op-celebration-moving .op-celebration-beam.left{animation:opBeamSweepLeft 7s ease-in-out infinite alternate}.op-celebration-moving .op-celebration-beam.right{animation:opBeamSweepRight 8s ease-in-out infinite alternate}
+@keyframes opBeamSweepLeft{to{transform:rotate(14deg);opacity:.55}}@keyframes opBeamSweepRight{to{transform:rotate(-14deg);opacity:.55}}
+.op-celebration-ribbon{position:absolute;width:20%;height:82%;bottom:-20%;border-radius:50%;border-left:10px solid #edc56ce6;border-right:3px solid #fff3bf;box-shadow:-5px 0 12px #e9b94388,inset 5px 0 12px #36b9ff66;transform:rotate(26deg)}
+.op-celebration-ribbon.left{left:-10%}.op-celebration-ribbon.right{right:-10%;transform:scaleX(-1) rotate(26deg)}
+.op-celebration-moving .op-celebration-ribbon.left{animation:opRibbon 7s ease-in-out infinite alternate}.op-celebration-moving .op-celebration-ribbon.right{animation:opRibbonRight 8s ease-in-out infinite alternate}
+@keyframes opRibbon{to{transform:translateY(-5%) rotate(15deg)}}@keyframes opRibbonRight{to{transform:scaleX(-1) translateY(-5%) rotate(15deg)}}
+.op-celebration-stars i{position:absolute;width:4px;height:4px;background:#fff5c3;box-shadow:0 0 10px 2px #ffe19ba6;opacity:.6;transform:rotate(45deg)}
+.op-celebration-stars i:nth-child(7n){width:10px;height:10px;clip-path:polygon(50% 0,60% 40%,100% 50%,60% 60%,50% 100%,40% 60%,0 50%,40% 40%)}
+.op-celebration-moving .op-celebration-stars i{animation:opTwinkle 2.6s ease-in-out infinite alternate}
+@keyframes opTwinkle{from{opacity:.15;transform:scale(.6) rotate(45deg)}to{opacity:1;transform:scale(1.2) rotate(45deg)}}
+.op-celebrating .op-stage-toolbar{justify-content:center;gap:6px;flex-wrap:wrap}.op-celebrating .op-stage-toolbar .op-button{min-height:28px;padding:5px 9px;background:#071b37cc;border:1px solid #278fc38c;color:#cbf0ff;font-size:11px;border-radius:9px}
+.op-celebrating .op-stage-toolbar .active{background:#03b6ed;color:#001a32;box-shadow:0 0 14px #00b9ee66}
+.op-celebrating .op-stage-toolbar .op-celebrate-button{border-color:#f2cd70;color:#ffe494;background:linear-gradient(#302816,#141522);box-shadow:0 0 16px #f9cd6544}
+.op-celebrating .op-stage-sync{text-align:center;font-size:10px;opacity:.7;margin:4px 0}
+.op-celebrating #op-stage-body{gap:6px;align-items:center}.op-celebrating .op-stage-hero{justify-content:center;text-align:center;margin:0;gap:12px}
+.op-celebrating .op-stage-logo{width:44px;height:44px}.op-celebrating .op-stage-eyebrow{color:#e5c980;font-size:clamp(10px,1.2vw,16px);letter-spacing:.08em}
+.op-celebrating .op-stage-hero h1{font-size:clamp(24px,4.5vh,54px);letter-spacing:.015em;text-shadow:0 0 15px #74caff44}
+.op-celebrating .op-result-tabs{justify-content:center;margin:3px 0}.op-celebrating .op-result-tabs .op-button{background:#071a35cc;color:#ade6ff;border:1px solid #1598d4;padding:7px 30px;font-size:13px;border-radius:10px}
+.op-celebrating .op-result-tabs .active{background:linear-gradient(120deg,#0ba9e5,#20d5f2);color:#001b30;box-shadow:0 0 16px #1bc9f566}
+.op-celebration-banner{position:relative;display:flex;flex-shrink:0;align-items:center;justify-content:center;gap:16px;text-align:center;margin:4px 0 0;padding:0 10px 11px;max-width:94%;min-height:55px}
+.op-celebration-banner strong{font-size:clamp(22px,3.5vw,48px);font-weight:900;line-height:1.15;letter-spacing:.015em;color:#ffe7a0;text-shadow:0 1px 2px #a46e20,0 0 18px #ffd56a66}
+.op-celebration-banner svg{width:40px;height:66px;flex-shrink:0;filter:drop-shadow(0 0 6px #ffd56a77)}.op-celebration-banner svg:last-child{transform:scaleX(-1)}
+.op-celebration-banner:after{content:'✦';position:absolute;bottom:0;left:14%;right:14%;font-size:18px;height:12px;line-height:12px;color:#ffe89e;background:linear-gradient(90deg,transparent,#ddb65b 35%,transparent 44% 56%,#ddb65b 65%,transparent) center/100% 1px no-repeat}
+.op-celebration-subtitle{color:#f6e6bf;text-align:center;font-size:clamp(12px,1.7vh,18px);margin:2px 0 5px;letter-spacing:.08em;flex-shrink:0}
+.op-celebrating .op-result-card{position:relative;isolation:isolate;width:84%;max-width:1500px;flex:1;min-height:0;margin:0 auto 4vh;padding:16px 22px;border-radius:22px;border:1.5px solid #f9dc8d;background:linear-gradient(125deg,#0a2546ee,#050f27f5);box-shadow:0 0 7px #ffe194a6,0 0 32px #eac16a33,inset 0 0 35px #2d91dc14;overflow:hidden}
+.op-celebrating .op-result-heading{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}
+.op-celebrating .op-result-grid{gap:8px 30px;width:100%;min-height:0;position:relative;z-index:1}
+.op-celebrating .op-result-row{position:relative;min-height:0;gap:10px;padding:8px 12px;border:1px solid #4099c687;border-radius:14px;background:linear-gradient(115deg,#071b38,#061129);box-shadow:inset 0 1px 1px #87d9ff22;overflow:hidden}
+.op-celebrating .op-result-row[hidden]{display:none!important}.op-celebrating .op-result-rank{display:grid;place-items:center;width:32px;height:32px;flex:0 0 32px;border-radius:50%;border:1px solid #32cafa;color:#d1f5ff;box-shadow:0 0 10px #14bcfa66,inset 0 0 8px #12bbf544;font-size:18px}
+.op-celebrating .op-result-name{font-size:clamp(14px,1.4vw,24px);font-weight:750;line-height:1.25}.op-celebrating .op-result-votes,.op-celebrating .op-result-track{display:none}
+.op-elected-badge{flex-shrink:0;white-space:nowrap;color:#ffe398;border:1px solid #d0a956;border-radius:7px;padding:4px 7px;font-weight:800;font-size:clamp(9px,.65vw,12px);background:linear-gradient(135deg,#51402277,#152039);box-shadow:0 0 9px #e1bf5822}
+.op-elected-badge:before{content:'❧ ';color:#e4c16e}.op-elected-badge:after{content:' ❧';color:#e4c16e}
+.op-celebrating .op-result-card:after{content:'';position:absolute;inset:0;pointer-events:none;background:linear-gradient(110deg,transparent 34%,#f8e8a80b 47%,#76d7ff15 50%,transparent 63%);background-size:300% 100%;opacity:0}
+.op-celebration-moving .op-result-card:after{opacity:1;animation:opSweep 6s ease-in-out infinite}
+.op-celebration-moving .op-celebration-banner strong{background:linear-gradient(100deg,#e4b85c,#fff3bf 25%,#f2c45e 50%,#fff8d7 75%,#e4b85c);background-size:200% auto;background-clip:text;-webkit-background-clip:text;-webkit-text-fill-color:transparent;text-shadow:none;filter:drop-shadow(0 0 9px #f9ce5a66);animation:opGold 4s linear infinite}
+@keyframes opSweep{0%{background-position:130% 0}70%,100%{background-position:-50% 0}}@keyframes opGold{to{background-position:200% 0}}
+.op-celebration-bithu .op-result-card{width:72%;max-width:1280px;flex:0 1 42vh;min-height:220px;margin-top:2vh;padding:24px 4vw 32px}
+.op-celebration-bithu .op-result-heading{position:static;width:auto;height:auto;clip-path:none;display:flex;justify-content:center;margin:0 0 10px}.op-celebration-bithu .op-result-heading h2{font-size:clamp(18px,2.5vw,32px);font-family:Georgia,'Times New Roman',serif;letter-spacing:.06em;text-align:center}
+.op-celebration-bithu .op-result-summary{display:none}.op-celebration-bithu .op-result-single{margin:0;width:100%;min-height:0}
+.op-celebration-bithu .op-result-single .op-result-row{border:0;background:none;box-shadow:none;display:flex;flex-direction:column;justify-content:center;gap:18px;padding:5px;overflow:visible}
+.op-celebration-bithu .op-result-single .op-result-rank{display:none}.op-celebration-bithu .op-result-single .op-result-detail{flex:0;width:100%;text-align:center}
+.op-celebration-bithu .op-result-single .op-result-name{font-family:Georgia,'Times New Roman',serif;font-size:clamp(32px,4.2vw,72px);line-height:1.2;text-shadow:0 0 15px #a1d7ff44}
+.op-celebration-bithu .op-result-single .op-elected-badge{padding:8px 20px;font-family:Georgia,'Times New Roman',serif;font-size:clamp(14px,1.5vw,22px);border-radius:6px;border:2px solid #e9c87b;box-shadow:0 0 9px #ffd56a77,inset 0 0 12px #edc16b22}
+.op-celebration-bithu .op-result-single .op-result-track{display:block;width:85%;margin:20px auto 0;height:9px;background:#08213e;box-shadow:0 0 16px #1cc8ff88}
+.op-celebration-bithu .op-result-single .op-result-track>div{background:linear-gradient(90deg,#0599ef,#1ad8fa,#c8ffff);box-shadow:0 0 12px #58e8ff}
+.op-celebration-moving.op-celebration-bithu .op-result-track>div{background-size:200% 100%;animation:opGold 3s linear infinite}
+@media(min-width:768px) and (max-height:730px){.op-stage.is-results.op-celebrating{padding-top:6px}.op-celebrating #op-stage-body{gap:3px}.op-celebrating .op-stage-hero h1{font-size:27px}.op-celebrating .op-stage-logo{width:34px;height:34px}.op-celebration-banner{min-height:38px;padding-bottom:9px;margin:0}.op-celebration-banner strong{font-size:26px}.op-celebration-banner svg{width:28px;height:42px}.op-celebrating .op-result-card{padding:12px 16px;margin-bottom:2vh}.op-celebrating .op-result-row{padding:5px 9px}.op-celebrating .op-result-name{font-size:15px}.op-celebration-bithu .op-result-single .op-result-name{font-size:42px}.op-celebrating .op-result-tabs .op-button{padding:5px 23px}.op-celebration-subtitle{margin:0 0 3px}}
+@media(max-width:767px){.op-stage.is-results.op-celebrating{padding:10px 12px 30px}.op-celebrating .op-stage-toolbar .op-button{font-size:10px;padding:5px 7px}.op-celebrating .op-stage-hero{margin:12px 0 4px}.op-celebrating .op-stage-logo{width:35px;height:35px}.op-celebrating .op-stage-hero h1{font-size:24px}.op-celebrating .op-stage-eyebrow{font-size:9px}.op-celebration-banner{gap:7px;padding:10px 0 15px;max-width:100%}.op-celebration-banner strong{font-size:24px}.op-celebration-banner svg{width:25px;height:54px}.op-celebrating .op-result-card,.op-celebration-bithu .op-result-card{width:100%;padding:12px;margin:8px 0 30px;min-height:0;flex:none}.op-celebrating .op-result-grid{gap:9px}.op-celebrating .op-result-row{min-height:63px;padding:9px;gap:8px;flex-wrap:wrap}.op-celebrating .op-result-detail{flex:1;min-width:140px}.op-celebrating .op-result-name{font-size:16px}.op-elected-badge{font-size:9px;margin-left:auto}.op-celebration-bithu .op-result-single .op-result-name{font-size:36px}.op-celebration-bithu .op-result-heading h2{font-size:21px}.op-celebration-bithu .op-result-single .op-result-row{padding:18px 0}.op-celebration-stars i:nth-child(n+30){display:none}.op-cinematic-ray{opacity:.2}.op-celebration-beam{filter:blur(16px)}}
+@media(prefers-reduced-motion:reduce){.op-stage:not(.op-force-motion) .op-celebration-layer *,.op-stage:not(.op-force-motion) .op-celebration-banner *,.op-stage:not(.op-force-motion) .op-result-card:after,.op-stage:not(.op-force-motion) .op-result-track>div{animation:none!important}.op-stage:not(.op-force-motion) .op-celebration-foreground{display:none}}
+
+/* Fine blue fireworks use composited SVG transforms; no full-screen blur redraw. */
+.op-cinematic-firework{display:none;position:absolute;width:32vw;height:32vw;max-width:580px;max-height:580px;opacity:.65;overflow:visible;transform-origin:center}
+.op-celebration-bithu .op-cinematic-firework{display:block}.op-cinematic-firework.left{left:-12%}.op-cinematic-firework.right{right:-12%}.op-cinematic-firework.upper{top:-12%}.op-cinematic-firework.lower{bottom:2%;width:27vw;height:27vw}
+.op-celebration-moving .op-cinematic-firework{animation:opBloom 4.8s cubic-bezier(.15,.6,.3,1) infinite;animation-delay:var(--burst-delay)}
+@keyframes opBloom{0%{transform:scale(.12);opacity:0}10%{opacity:.95}45%{opacity:.7}85%,100%{transform:scale(1.12) translateY(12px);opacity:0}}
+@media(max-width:767px){.op-cinematic-firework{width:65vw;height:65vw}.op-cinematic-firework.lower{width:55vw;height:55vw}.op-cinematic-firework.left{left:-30%}.op-cinematic-firework.right{right:-30%}.op-cinematic-firework.upper{top:6%}}
+
+.op-cinematic-silk{position:absolute;top:8%;height:100%;width:12%;opacity:.9;overflow:visible;transform-origin:center;pointer-events:none}.op-cinematic-silk.left{left:-4%}.op-cinematic-silk.right{right:-4%;transform:scaleX(-1)}
+.op-celebration-moving .op-cinematic-silk.left{animation:opSilkLeft 7s ease-in-out infinite alternate}.op-celebration-moving .op-cinematic-silk.right{animation:opSilkRight 8s ease-in-out infinite alternate}
+@keyframes opSilkLeft{to{transform:translateY(-3%) rotate(4deg)}}@keyframes opSilkRight{to{transform:scaleX(-1) translateY(-3%) rotate(4deg)}}
+@media(max-width:767px){.op-cinematic-silk{width:16%;opacity:.6}.op-cinematic-silk.left{left:-9%}.op-cinematic-silk.right{right:-9%}}
+
+/* 3.2.7 — saturated royal blue, luminous cyan and rich champagne gold. */
+.op-stage.is-results.op-celebrating{background:radial-gradient(ellipse at 50% 100%,#0062ad4d,transparent 54%),radial-gradient(ellipse at 50% 20%,#082e68,#010819 78%)}
+.op-cinematic-scenery{background:radial-gradient(ellipse at 50% 100%,#ffc83b35,transparent 43%)}
+.op-cinematic-curtain{background:repeating-linear-gradient(90deg,#010617aa,#0854a16b 12%,#03153199 25%,#f4b6314d 27%,#04112b 30%);border-color:#e6b94988}
+.op-cinematic-ray{background:linear-gradient(180deg,#ffda699e,#ffbf322e 28%,transparent 80%)}
+.op-celebration-beam{background:radial-gradient(ellipse at 50% 0,#ffc43b8a,transparent 64%)}
+.op-cinematic-silk{opacity:1}.op-celebration-foreground canvas{opacity:1}
+.op-celebrating .op-stage-hero h1{color:#fff;text-shadow:0 0 16px #22baff66}
+.op-celebrating .op-stage-eyebrow{color:#ffda70}.op-celebration-subtitle{color:#ffebac}
+.op-celebration-banner strong{color:#ffdd66;text-shadow:0 2px 2px #a2640c,0 0 20px #ffbc3280}
+.op-celebration-moving .op-celebration-banner strong{background-image:linear-gradient(100deg,#ffb829,#ffe177 20%,#fff9d2 35%,#ffc438 52%,#fff2a6 73%,#ffb829);filter:drop-shadow(0 0 10px #ffca466e)}
+.op-celebration-banner svg{filter:drop-shadow(0 0 8px #ffc128a6)}
+.op-celebrating .op-result-card{border-color:#ffe080;background:linear-gradient(125deg,#073163f5,#021329fa);box-shadow:0 0 5px #fff2b3,0 0 18px #ffbf4d73,0 0 38px #08b8f52e,inset 0 0 30px #008dff15}
+.op-celebrating .op-result-row{border-color:#0bbcff99;background:linear-gradient(110deg,#07386d,#03142e);box-shadow:inset 0 1px 1px #5edbff4d,0 0 8px #0b85f51a}
+.op-celebrating .op-result-name{color:#fff}.op-celebrating .op-result-rank{color:#e5fdff;border-color:#43e6ff;background:#0278bc33;box-shadow:0 0 12px #00cfff99,inset 0 0 8px #00b9ed66}
+.op-elected-badge{color:#fff0a2;border-color:#ffd05c;background:linear-gradient(135deg,#69501999,#172239);box-shadow:0 0 10px #ffc13b38}
+.op-elected-badge:before,.op-elected-badge:after{color:#ffdc6d}
+.op-celebrating .op-result-tabs .active{background:linear-gradient(120deg,#00a7ff,#22e4ff);color:#001b30;box-shadow:0 0 18px #00cfff80;border-color:#5deeff}
+.op-celebrating .op-stage-toolbar .op-celebrate-button{color:#ffeb9a;border-color:#ffdc6b;background:linear-gradient(#513914,#17203b);box-shadow:0 0 14px #ffbf4a66}
+.op-celebration-bithu .op-result-single .op-result-name{text-shadow:0 0 14px #56d9ff66,0 2px 3px #0008}
+.op-celebration-bithu .op-result-single .op-elected-badge{border-color:#ffe58b;box-shadow:0 0 12px #ffc244a6,inset 0 0 14px #e8ad2e33}
+.op-celebration-bithu .op-result-single .op-result-track{box-shadow:0 0 19px #00cfffaa}
+.op-celebration-bithu .op-result-single .op-result-track>div{background-image:linear-gradient(90deg,#008dff,#00e2ff,#e2ffff);box-shadow:0 0 14px #16e8ff}
+.op-cinematic-firework{opacity:.9}
+@keyframes opBloom{0%{transform:scale(.12);opacity:0}10%{opacity:1}45%{opacity:.92}85%,100%{transform:scale(1.12) translateY(12px);opacity:0}}
+@media(max-width:767px){.op-cinematic-silk{opacity:.85}}
+
+/* Reference-inspired artwork beneath live data and animation layers. */
+.op-cinematic-scenery{background:#031336 url('./celebration-stage-bch.webp') center/100% 100% no-repeat}
+.op-celebration-bithu .op-cinematic-scenery{background-image:url('./celebration-stage-bithu.webp')}
+.op-cinematic-curtain,.op-cinematic-floor,.op-cinematic-orbit,.op-celebration-ribbon{display:none}
+.op-cinematic-ray{mix-blend-mode:screen;opacity:.12}.op-celebration-beam{opacity:.3}
+@keyframes opRay{from{transform:rotate(calc((var(--ray) - 2.5)*9deg - 9deg));opacity:.06}to{transform:rotate(calc((var(--ray) - 2.5)*9deg + 9deg));opacity:.22}}
+.op-cinematic-silk{width:8%;opacity:.62}.op-cinematic-silk.left{left:-5%}.op-cinematic-silk.right{right:-5%}
+.op-celebration-banner svg{width:50px;height:74px}.op-celebration-banner strong{-webkit-text-stroke:.25px #ffe9a0}
+.op-celebrating .op-result-card{background:linear-gradient(125deg,#062955eb,#021029f5);border:2px solid #ffe59b;box-shadow:0 0 4px #fff8db,0 0 17px #ffcd61a6,0 0 38px #08b8f52e,inset 0 0 25px #007fff12}
+.op-celebrating .op-result-card:before{content:'';position:absolute;inset:5px;border:1px solid #f3cd744d;border-radius:16px;pointer-events:none}
+.op-celebrating .op-result-row{border-color:#38c6ffb3;background:linear-gradient(110deg,#062b59,#02142f)}
+.op-celebration-bithu .op-result-single .op-result-row{background:none}
+.op-celebration-moving .op-result-card:before{animation:opRimLight 3.5s ease-in-out infinite alternate}
+@keyframes opRimLight{from{border-color:#f3cd7438}to{border-color:#fff0a6a6;box-shadow:inset 0 0 12px #ffc43b20}}
+@media(min-width:768px) and (max-height:730px){.op-celebration-banner svg{width:34px;height:44px}}
+@media(max-width:767px){.op-cinematic-scenery{background-size:auto 100%;background-position:center}.op-celebration-banner svg{width:30px;height:58px}.op-cinematic-silk{width:13%;opacity:.45}}
+@media(prefers-reduced-motion:reduce){.op-stage:not(.op-force-motion) .op-result-card:before{animation:none!important}}
+
+@media(min-width:768px) and (min-height:731px){.op-celebration-bch .op-result-card{margin-bottom:10vh}}

@@ -8,7 +8,7 @@ window.createCelebrationAudio=function(){
  function noise(duration){const key=String(duration);if(noiseCache.has(key))return noiseCache.get(key);const buffer=ac.createBuffer(1,Math.ceil(ac.sampleRate*duration),ac.sampleRate),data=buffer.getChannelData(0);for(let i=0;i<data.length;i++)data[i]=Math.random()*2-1;noiseCache.set(key,buffer);return buffer;}
  function tone(frequency,end,duration,peak,delay=0){if(!ac||muted)return;const t=ac.currentTime+delay,osc=ac.createOscillator(),gain=ac.createGain();osc.type='triangle';osc.frequency.setValueAtTime(frequency,t);if(end)osc.frequency.exponentialRampToValueAtTime(end,t+duration*.85);gain.gain.setValueAtTime(.0001,t);gain.gain.linearRampToValueAtTime(peak,t+.015);gain.gain.exponentialRampToValueAtTime(.0001,t+duration);osc.connect(gain);gain.connect(master);track(osc,gain);osc.start(t);osc.stop(t+duration+.02);}
  function noiseHit(duration,peak,frequency,delay=0){if(!ac||muted)return;const t=ac.currentTime+delay,source=ac.createBufferSource(),filter=ac.createBiquadFilter(),gain=ac.createGain();source.buffer=noise(duration);filter.type='bandpass';filter.frequency.setValueAtTime(frequency,t);filter.Q.setValueAtTime(1.6,t);gain.gain.setValueAtTime(.0001,t);gain.gain.linearRampToValueAtTime(peak,t+.006);gain.gain.exponentialRampToValueAtTime(.0001,t+duration);source.connect(filter);filter.connect(gain);gain.connect(master);track(source,filter,gain);source.start(t);source.stop(t+duration+.01);}
- function start(){stop();if(!ensure())return;try{[523.25,659.25,783.99,1046.5].forEach((f,i)=>tone(f,0,1.3,.045,i*.09));const started=performance.now();clapTimer=setInterval(()=>{const elapsed=performance.now()-started;if(elapsed>6500){clearInterval(clapTimer);clapTimer=null;return;}if(ac.state!=='running')return;const envelope=Math.min(1,elapsed/800,(6500-elapsed)/1400);try{for(let i=0;i<3;i++)noiseHit(.055,.055*Math.max(.1,envelope),1100+Math.random()*1100,Math.random()*.04);}catch{}},80);}catch{}}
+ function start(round){stop();if(!ensure())return;try{const melody=round==='bithu'?[523.25,659.25,783.99,1046.5,987.77,1046.5,1318.51]:[392,523.25,659.25,783.99,1046.5];melody.forEach((f,i)=>{tone(f,0,1.1,.036,i*.19);tone(f/2,0,1.4,.016,i*.19);});[261.63,329.63,392].forEach(f=>tone(f,0,2.6,.018,.8));const started=performance.now();clapTimer=setInterval(()=>{const elapsed=performance.now()-started;if(elapsed>6500){clearInterval(clapTimer);clapTimer=null;return;}if(ac.state!=='running')return;const envelope=Math.min(1,elapsed/800,(6500-elapsed)/1400);try{for(let i=0;i<3;i++)noiseHit(.055,.055*Math.max(.1,envelope),1100+Math.random()*1100,Math.random()*.04);}catch{}},80);}catch{}}
  function launch(){if(!ac||muted||ac.state!=='running')return;try{tone(360+Math.random()*80,1250,.45,.025);}catch{}}
  function explode(){if(!ac||muted||ac.state!=='running')return;try{tone(150,32,.6,.10);noiseHit(.7,.07,500);for(let i=0;i<3;i++)noiseHit(.045,.035,2600+Math.random()*1000,.15+Math.random()*.35);}catch{}}
  function setMuted(value){muted=!!value;if(muted)stop();else ensure();return muted;}
@@ -43,6 +43,20 @@ window.createStageCelebration = function (root) {
 
   const canvas = document.createElement('canvas');
   const foreground=document.createElement('div');foreground.className='op-celebration-foreground';foreground.setAttribute('aria-hidden','true');foreground.append(canvas);
+  const scenery=document.createElement('div');scenery.className='op-cinematic-scenery';
+  scenery.innerHTML='<div class="op-cinematic-curtain left"></div><div class="op-cinematic-curtain right"></div><div class="op-cinematic-floor"></div><div class="op-cinematic-orbit"></div>';
+  layer.prepend(scenery);
+  for(const side of ['left','right']){
+    const silk=document.createElementNS('http://www.w3.org/2000/svg','svg');silk.classList.add('op-cinematic-silk',side);silk.setAttribute('viewBox','0 0 180 800');silk.setAttribute('preserveAspectRatio','none');
+    silk.innerHTML='<defs><linearGradient id="op-silk-'+side+'" x1="0" x2="1"><stop stop-color="#a36b08"/><stop offset=".28" stop-color="#ffd13d"/><stop offset=".48" stop-color="#fff4c5"/><stop offset=".65" stop-color="#c49231"/><stop offset="1" stop-color="#f6d278"/></linearGradient><linearGradient id="op-blue-'+side+'"><stop stop-color="#06437b"/><stop offset=".5" stop-color="#20ddff"/><stop offset="1" stop-color="#0a6bb7"/></linearGradient></defs><path d="M-30 30 C160 120 -40 160 65 260 S165 360 45 440 S-15 610 160 770" fill="none" stroke="url(#op-silk-'+side+')" stroke-width="17"/><path d="M-35 60 C150 180 -55 240 72 340 S170 470 35 550 S35 700 170 800" fill="none" stroke="url(#op-blue-'+side+')" stroke-width="10"/>';
+    layer.append(silk);
+  }
+  for(let side=0;side<2;side++)for(let k=0;k<2;k++){
+    const bloom=document.createElementNS('http://www.w3.org/2000/svg','svg');bloom.setAttribute('viewBox','0 0 360 360');bloom.classList.add('op-cinematic-firework');bloom.classList.add(side?'right':'left');bloom.classList.add(k?'lower':'upper');bloom.style.setProperty('--burst-delay',(-side*1.7-k*1.1)+'s');
+    let rays='';for(let i=0;i<56;i++){const a=i*Math.PI*2/56,r=112+(i*37%47),x=Math.cos(a),y=Math.sin(a),color=i%5?'#22d6ff':'#ffe477';rays+='<path d="M'+(180+x*34)+' '+(180+y*34)+' Q'+(180+x*r*.8)+' '+(180+y*r*.8)+' '+(180+x*r)+' '+(180+y*r+8)+'" fill="none" stroke="'+color+'" stroke-width="'+(i%3?1.6:2.5)+'" stroke-linecap="round"/><circle cx="'+(180+x*r)+'" cy="'+(180+y*r+8)+'" r="1.7" fill="#e5fbff"/>';}
+    bloom.innerHTML='<g>'+rays+'<circle cx="180" cy="180" r="5" fill="#fff0bf"/></g>';layer.append(bloom);
+  }
+  for(let i=0;i<6;i++){const ray=document.createElement('i');ray.className='op-cinematic-ray';ray.style.setProperty('--ray',i);ray.style.left=(i<3?2+i*8:82+(i-3)*8)+'%';layer.append(ray);}
   root.append(layer,foreground);
 
   let active = null,
@@ -72,7 +86,7 @@ window.createStageCelebration = function (root) {
   const stopAllSounds=()=>sound.stop();
   const playLaunchWhistle=()=>sound.launch();
   const playFireworkExplosionSound=()=>sound.explode();
-  const playApplauseAndFanfare=()=>sound.start();
+  const playApplauseAndFanfare=()=>sound.start(active?.round);
   // =========================================================================
   // HỆ THỐNG ĐỒ HỌA PHÁO HOA, DẢI KIM TUYẾN XOÁY & ÁNH SÁNG (GIỐNG ẢNH THIẾT KẾ)
   // =========================================================================
@@ -81,7 +95,8 @@ window.createStageCelebration = function (root) {
     const bokehColors = ['rgba(255,213,106,0.18)', 'rgba(56,189,248,0.16)', 'rgba(245,158,11,0.12)', 'rgba(255,246,204,0.2)'];
     for (let i = 0; i < (width < 768 ? 8 : 16); i++) {
       bokehs.push({
-        x: Math.random() * width,
+        x: width * (i % 2 ? .90 + Math.random() * .10 : Math.random() * .10),
+        side: i % 2,
         y: height * (0.2 + Math.random() * 0.65),
         r: 16 + Math.random() * 36,
         vx: (Math.random() - 0.5) * 14,
@@ -147,9 +162,9 @@ window.createStageCelebration = function (root) {
       heading.textContent = heading.dataset.originalTitle;
       delete heading.dataset.originalTitle;
     }
-    for (const row of root.querySelectorAll('.op-result-elected')) {
-      row.classList.remove('op-result-elected');
-    }
+    for(const row of root.querySelectorAll('.op-result-row')){row.hidden=false;row.classList.remove('op-result-elected');row.querySelector('.op-elected-badge')?.remove();const rank=row.querySelector('.op-result-rank');if(rank?.dataset.originalRank){rank.textContent=rank.dataset.originalRank;delete rank.dataset.originalRank;}}
+    const grid=root.querySelector('.op-result-grid');if(grid?.dataset.originalRows){grid.style.gridTemplateRows=grid.dataset.originalRows;delete grid.dataset.originalRows;}
+    root.querySelector('.op-celebration-subtitle')?.remove();
   }
 
   function decorate(result) {
@@ -175,19 +190,24 @@ window.createStageCelebration = function (root) {
       const text = document.createElement('strong');
       text.textContent =
         active.round === 'bch'
-          ? 'CHÚC MỪNG BAN CHẤP HÀNH NHIỆM KỲ MỚI'
+          ? 'CHÚC MỪNG BAN CHẤP HÀNH'
           : 'CHÚC MỪNG BÍ THƯ ĐOÀN TRƯỜNG';
       banner.append(wreath(), text, wreath());
       const card = root.querySelector('.op-result-card');
       card?.before(banner);
     }
     const winners = new Set(result.winners || []);
-    for (const [i, row] of [...root.querySelectorAll('.op-result-row')].entries()) {
-      row.classList.toggle('op-result-elected', winners.has(result.ranked[i]?.id));
+    let elected=0;
+    for(const [i,row] of [...root.querySelectorAll('.op-result-row')].entries()){
+      const yes=winners.has(result.ranked[i]?.id);row.classList.toggle('op-result-elected',yes);row.hidden=!yes;
+      if(yes){elected++;const rank=row.querySelector('.op-result-rank');if(!rank.dataset.originalRank)rank.dataset.originalRank=rank.textContent;rank.textContent=String(elected).padStart(2,'0');
+        if(!row.querySelector('.op-elected-badge')){const badge=document.createElement('span');badge.className='op-elected-badge';badge.textContent=active.round==='bch'?'TRÚNG CỬ':'CHÚC MỪNG TRÚNG CỬ';row.append(badge);}}
     }
+    const grid=root.querySelector('.op-result-grid');if(grid){if(!grid.dataset.originalRows)grid.dataset.originalRows=grid.style.gridTemplateRows;grid.style.gridTemplateRows='repeat('+Math.ceil(elected/2)+', minmax(0, 1fr))';}
+    if(!root.querySelector('.op-celebration-subtitle')){const sub=document.createElement('p');sub.className='op-celebration-subtitle';sub.textContent=active.round==='bch'?elected+' thành viên trúng cử':'VINH DỰ · TRÁCH NHIỆM · CỐNG HIẾN';root.querySelector('.op-celebration-banner')?.after(sub);}
   }
 
-  function captureTextRects(){protectedRects=[...root.querySelectorAll('.op-result-name,.op-result-votes,.op-result-rank,.op-result-heading,.op-celebration-banner,.op-stage-hero,.op-stage-toolbar,.op-stage-sync')].map(e=>e.getBoundingClientRect()).filter(r=>r.width>0&&r.height>0);}
+  function captureTextRects(){protectedRects=[...root.querySelectorAll('.op-result-name,.op-result-votes,.op-result-rank,.op-result-heading,.op-elected-badge,.op-celebration-subtitle,.op-celebration-banner,.op-stage-hero,.op-stage-toolbar,.op-stage-sync')].map(e=>e.getBoundingClientRect()).filter(r=>r.width>0&&r.height>0);}
   function sync(round, result, mode) {
     updateControls();
     if (active && (mode !== 'results' || active.key !== key(round, result))) stop();
@@ -196,7 +216,7 @@ window.createStageCelebration = function (root) {
 
   function burst(x, y, color) {
     playFireworkExplosionSound();
-    const count = width < 768 ? 44 : 72;
+    const count = width < 768 ? 24 : 40;
     for (let i = 0; i < count; i++) {
       const angle = (Math.PI * 2 * i) / count + (Math.random() - 0.5) * 0.04,
         speed = 110 + Math.random() * 195;
@@ -214,7 +234,7 @@ window.createStageCelebration = function (root) {
         glitter: false
       });
     }
-    for (let i = 0; i < (width < 768 ? 12 : 24); i++) {
+    for (let i = 0; i < (width < 768 ? 8 : 14); i++) {
       const angle = Math.random() * Math.PI * 2,
         speed = 25 + Math.random() * 85;
       particles.push({
@@ -240,7 +260,7 @@ window.createStageCelebration = function (root) {
     const left = bursts % 2 === 0;
     const x = width * (left ? 0.05 + Math.random() * 0.14 : 0.81 + Math.random() * 0.14);
     const destY = height * (0.14 + Math.random() * 0.28);
-    const palette = ['#ffd56a', '#38bdf8', '#ffe49e', '#7dd3fc'];
+    const palette = ['#00cfff', '#268bff', '#67edff', '#00b7ff', '#ffd341'];
     rockets.push({
       x,
       y: height + 10,
@@ -287,18 +307,18 @@ window.createStageCelebration = function (root) {
   function draw(now) {
     if (!active) return;
     frame = requestAnimationFrame(draw);
-    if (now - last < 32) return;
+    if (now - last < 40) return;
     const dt = Math.min(0.05, (now - (last || now)) / 1000);
     last = now;
     const elapsed = (now - start) / 1000;
 
     ctx.clearRect(0, 0, width, height);
 
-    if (elapsed >= bursts * 0.85) {
+    if (active.round==='bithu' && elapsed >= bursts * 1.4) {
       launch();
       bursts++;
     }
-    if (elapsed >= papers * 0.22) {
+    if (active.round==='bithu' && elapsed >= papers * 0.28) {
       for (let i = 0; i < 2; i++) paper(false);
       papers++;
     }
@@ -311,8 +331,9 @@ window.createStageCelebration = function (root) {
       b.x += b.vx * dt;
       b.y += b.vy * dt;
       if (b.y < -b.r) b.y = height + b.r;
-      if (b.x < -b.r) b.x = width + b.r;
-      if (b.x > width + b.r) b.x = -b.r;
+      const lo=b.side?width*.88:0,hi=b.side?width:width*.12;
+      if(b.x<lo){b.x=lo;b.vx=Math.abs(b.vx);}
+      if(b.x>hi){b.x=hi;b.vx=-Math.abs(b.vx);}
       const pulse = 0.65 + 0.35 * Math.sin(now * 0.0025 + b.phase);
       const grad = ctx.createRadialGradient(b.x, b.y, 0, b.x, b.y, b.r);
       grad.addColorStop(0, b.color);
@@ -335,7 +356,7 @@ window.createStageCelebration = function (root) {
       const edgeFade = Math.sin(s.t * Math.PI);
 
       ctx.shadowColor = '#ffd56a';
-      ctx.shadowBlur = s.isStar ? 10 : 0;
+      ctx.shadowBlur = 0;
       ctx.globalAlpha = Math.max(0, edgeFade * (0.55 + 0.45 * Math.sin(now * 0.01 + s.phase)));
       ctx.fillStyle = s.isStar ? '#fff6c2' : '#ffd56a';
 
@@ -356,7 +377,7 @@ window.createStageCelebration = function (root) {
       r.y += r.vy * dt;
       r.vy += 18 * dt;
       ctx.shadowColor = r.color;
-      ctx.shadowBlur = 12;
+      ctx.shadowBlur = 0;
       strokeTrail(r.trail, r.color, 0.85, 2.2);
       ctx.globalAlpha = 1;
       ctx.fillStyle = '#fff9db';
@@ -418,7 +439,7 @@ window.createStageCelebration = function (root) {
         ctx.save();
         ctx.globalCompositeOperation = 'lighter';
         ctx.shadowColor = p.color;
-        ctx.shadowBlur = p.glitter ? 4 : 0;
+        ctx.shadowBlur = 0;
         strokeTrail(p.trail, p.color, alpha * 0.78, p.size * 0.8);
         ctx.globalAlpha = alpha;
         ctx.fillStyle = p.color;
@@ -430,7 +451,7 @@ window.createStageCelebration = function (root) {
     }
     particles = particles
       .filter((p) => p.life < p.max && p.y < height + 40)
-      .slice(-(width < 768 ? 240 : 440));
+      .slice(-(width < 768 ? 140 : 220));
     ctx.globalAlpha = 1;
     ctx.save();ctx.shadowBlur=0;ctx.globalCompositeOperation='destination-out';ctx.fillStyle='#000';for(const r of protectedRects)ctx.fillRect(r.left-4,r.top-4,r.width+8,r.height+8);ctx.restore();
   }
@@ -468,20 +489,19 @@ window.createStageCelebration = function (root) {
     }
     if (!ctx) return;
 
-    width = root.clientWidth || innerWidth;
-    height = root.clientHeight || innerHeight;
-    const dpr = Math.min(devicePixelRatio || 1, 1.25);
+    width = innerWidth;
+    height = innerHeight;
+    const dpr = Math.min(devicePixelRatio || 1, 1);
     canvas.width = Math.round(width * dpr);
     canvas.height = Math.round(height * dpr);
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
     captureTextRects();
     initBokehAndSwirl();
-    for (let i = 0; i < (width < 768 ? 32 : 56); i++) paper(true);
+    if(active.round==='bithu')for (let i = 0; i < (width < 768 ? 24 : 40); i++) paper(true);
 
     // Nổ ngay 2 chùm pháo hoa đại đóa 2 bên giống hệt bố cục ảnh thiết kế
-    burst(width * 0.11, height * 0.44, '#ffd56a');
-    burst(width * 0.91, height * 0.42, '#ffd56a');
+    if(active.round==='bithu'){burst(width * 0.08, height * 0.22, '#38bdf8');burst(width * 0.92, height * 0.22, '#60a5fa');}
 
     start = performance.now();
     last = 0;
