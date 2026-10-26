@@ -942,8 +942,8 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     function updateAdminQrCardPreview() {
       const totalDel = state.delegates.length;
       const checkedTotal = state.delegates.filter(x => x.checkedIn).length;
-      const bchVoted = state.delegates.filter(x => x.votedBch).length;
-      const biThuVoted = state.delegates.filter(x => x.votedBiThu).length;
+      const bchVoted = typeof ops!=='undefined'&&ops.data?.operations?.bch ? ops.data.operations.bch.turnout : state.delegates.filter(x => x.votedBch).length;
+      const biThuVoted = typeof ops!=='undefined'&&ops.data?.operations?.bithu ? ops.data.operations.bithu.turnout : state.delegates.filter(x => x.votedBiThu).length;
 
       const boxCode = document.getElementById("admin-qr-box-code");
       if (boxCode) boxCode.textContent = `${checkedTotal}/${totalDel} ĐB`;
@@ -1255,8 +1255,8 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
           "Họ và tên": d.name,
           "Chi đoàn": d.className,
           "Điểm danh QR": d.checkedIn ? "Đã điểm danh" : "Chưa",
-          "Bầu BCH": d.votedBch ? "Đã bầu" : "Chưa",
-          "Bầu Bí thư": d.votedBiThu ? "Đã bầu" : "Chưa"
+          "Bầu BCH": d.votedBch===null ? "Ẩn thông tin cá nhân (phiếu kín)" : d.votedBch ? "Đã bầu" : "Chưa",
+          "Bầu Bí thư": d.votedBiThu===null ? "Ẩn thông tin cá nhân (phiếu kín)" : d.votedBiThu ? "Đã bầu" : "Chưa"
         }));
         XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(delRows), "Danh_Sach_Dai_Bieu");
 
