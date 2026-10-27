@@ -4,8 +4,9 @@ const guest={code:'—',name:'Chưa xác thực đại biểu',className:'—',c
 async function electionRequest(path,method='GET',body,authenticated=true){
  if(!docsCloud.apiBase)throw new Error('Chưa cấu hình địa chỉ Worker.');
  const headers={};if(body!==undefined)headers['Content-Type']='application/json';if(authenticated&&election.token)headers.Authorization='Bearer '+election.token;
- let response;try{response=await fetch(docsCloud.apiBase+'/api/election/'+path,{method,headers,body:body===undefined?undefined:JSON.stringify(body),cache:'no-store',signal:AbortSignal.timeout(20000)});}catch{throw new Error('Không nhận được xác nhận từ máy chủ. Kiểm tra mạng rồi thử lại; phiếu chưa được báo thành công.');}
- const data=await response.json().catch(()=>({error:'Máy chủ trả dữ liệu không hợp lệ.'}));if(!response.ok){if(response.status===401&&authenticated){clearElectionSession();}const error=new Error(data.error||'Không xử lý được yêu cầu.');error.status=response.status;throw error;}return data;
+ const signal=AbortSignal.timeout(path==='vote'?60000:20000);
+ let response,data;try{response=await fetch(docsCloud.apiBase+'/api/election/'+path,{method,headers,body:body===undefined?undefined:JSON.stringify(body),cache:'no-store',signal});data=await response.json();}catch{throw new Error('Chưa nhận được xác nhận từ máy chủ. Đang giữ phiếu để kiểm tra lại.');}
+ if(!response.ok){if(response.status===401&&authenticated){clearElectionSession();}const error=new Error(data.error||'Không xử lý được yêu cầu.');error.status=response.status;throw error;}return data;
 }
 function clearElectionSession(){election.newAccess=null;election.token='';election.role=null;election.results=null;docsCloud.token='';sessionStorage.removeItem('htb_session_v2');state.sessionConfirmed=false;state.userRole='delegate';state.delegates=[];state.currentVoterIndex=0;election.viewSignature='';election.resultSignature='';renderRolePermissions();switchMainSection('overview');renderVoterBar();openQrLoginModal();}
 function getCurrentVoter(){return state.delegates[state.currentVoterIndex]||guest;}
@@ -97,9 +98,53 @@ function confirmDelegateQrLogin(targetSection='overview'){if(!canEnterSelectedDe
 async function logoutCurrentSession(){return runElection(async()=>{await electionRequest('logout','POST',{});clearElectionSession();syncDraftWithCurrentVoter();switchMainSection('overview');openQrLoginModal();renderElectionStatus('Đã đăng xuất.');});}
 async function submitChangePassword(){return runElection(async()=>{const p=document.getElementById('change-pass-new').value;if(p!==document.getElementById('change-pass-confirm').value)throw new Error('Xác nhận mật khẩu chưa khớp.');const data=await electionRequest('password','POST',{role:document.getElementById('change-pass-target-role').value,oldPassword:document.getElementById('change-pass-old').value,newPassword:p});for(const id of ['change-pass-new','change-pass-old','change-pass-confirm'])document.getElementById(id).value='';closeChangePasswordModal();if(data.relogin){clearElectionSession();switchMainSection('overview');openAdminLoginModal();}showToast('Đã đổi mật khẩu trên máy chủ; các phiên của tài khoản này đã bị thu hồi.','success');});}
 function validDraft(round){const r=election.rounds.find(r=>r.name===round),ids=[...(round==='bch'?state.bchDraftSelectedIds:state.biThuDraftSelectedIds)];if(!election.ready||!state.sessionConfirmed||election.role!=='delegate')throw new Error('Vui lòng xác thực đại biểu trước.');if(r?.status!=='open')throw new Error('Ban tổ chức chưa mở vòng bầu cử này.');if(!navigator.onLine)throw new Error('Đang mất mạng, phiếu chưa được gửi.');const blank=r.config.blankPolicy||(r.config.min===0?'valid':'reject');if((ids.length===0?blank==='reject':ids.length<r.config.min)||ids.length>Math.min(r.config.max,r.config.quota))throw new Error(`Chỉ chọn từ ${r.config.min} đến ${r.config.max} ứng viên.`);return ids;}
+// An uncertain ballot stays immutable until the authenticated server confirms it.
+function ballotProgress(message){renderElectionStatus(message);document.getElementById('vote-receipt').textContent=message;}
+async function inspectPendingBallot(round,identity){
+ if(!navigator.onLine)throw new Error('Đang mất mạng. Phiếu được giữ trong tab này; có mạng hãy bấm nộp lại để kiểm tra trước.');
+ const data=await electionRequest('state');
+ if(election.token!==identity.token||data.role!=='delegate'||data.delegates?.length!==1||data.delegates[0].code!==identity.code)throw new Error('Không xác minh được đúng đại biểu. Vui lòng đăng nhập lại và kiểm tra trạng thái phiếu.');
+ const receipt=data.receipts?.find(item=>item.round===round)?.receipt;
+ const voted=data.delegates[0][round==='bch'?'votedBch':'votedBiThu'];
+ if(voted&&!receipt)throw new Error('Máy chủ báo đã nộp nhưng chưa trả mã xác nhận. Không gửi thêm; liên hệ Ban kiểm phiếu.');
+ return {data,receipt};
+}
 async function submitServerBallot(round){return runElection(async()=>{
- const ids=validDraft(round);const key='htb_pending_vote:'+getCurrentVoter().code+':'+round;let pending;try{pending=JSON.parse(sessionStorage.getItem(key));}catch{}if(!pending||JSON.stringify(pending.selections)!==JSON.stringify(ids)||pending.version!==election.rounds.find(r=>r.name===round).version)pending={round,selections:ids,version:election.rounds.find(r=>r.name===round).version,requestId:crypto.randomUUID()};sessionStorage.setItem(key,JSON.stringify(pending));
- const result=await electionRequest('vote','POST',pending);sessionStorage.removeItem(key);sessionStorage.setItem('htb_receipt:'+getCurrentVoter().code+':'+round,result.receipt);
+ const identity={code:getCurrentVoter().code,token:election.token};
+ if(!identity.token||election.role!=='delegate')throw new Error('Vui lòng xác thực đại biểu trước.');
+ const key='htb_pending_vote:'+identity.code+':'+round;let pending,result;
+ try{pending=JSON.parse(sessionStorage.getItem(key));}catch{throw new Error('Không đọc được phiếu chờ. Không gửi thêm; liên hệ Ban kiểm phiếu.');}
+ if(pending){
+  ballotProgress('Đang kiểm tra phiếu trước đó. Vui lòng chờ, không đóng tab…');
+  const checked=await inspectPendingBallot(round,identity);
+  if(checked.receipt){applyElection(checked.data);result={receipt:checked.receipt};}
+  else{
+   const current=checked.data.rounds.find(r=>r.name===round);
+   if(pending.round!==round||!Array.isArray(pending.selections)||!pending.requestId||current?.version!==pending.version||current?.status!=='open')throw new Error('Chưa thấy phiếu được nhận nhưng vòng bầu đã thay đổi hoặc đang đóng. Giữ phiếu chờ và liên hệ Ban kiểm phiếu; không tự tạo phiếu mới.');
+   // Preserve the exact payload and requestId, even if the draft was changed.
+   state[round==='bch'?'bchDraftSelectedIds':'biThuDraftSelectedIds']=new Set(pending.selections);
+  }
+ }else{
+  const ids=validDraft(round);
+  if(getCurrentVoter()[round==='bch'?'votedBch':'votedBiThu'])throw new Error('Máy chủ đã xác nhận phiếu cho vòng này.');
+  pending={round,selections:ids,version:election.rounds.find(r=>r.name===round).version,requestId:crypto.randomUUID()};
+  sessionStorage.setItem(key,JSON.stringify(pending));
+ }
+ if(!result){
+  ballotProgress('Đang gửi phiếu — có thể chờ tối đa 60 giây. Vui lòng không đóng tab…');
+  try{result=await electionRequest('vote','POST',pending);if(!result?.receipt)throw new Error('Thiếu mã xác nhận.');}
+  catch(sendError){
+   ballotProgress('Chưa nhận được phản hồi. Đang kiểm tra máy chủ đã nhận phiếu chưa…');
+   let checked;
+   try{checked=await inspectPendingBallot(round,identity);}catch{
+    throw new Error('Chưa xác định được phiếu đã nhận hay chưa. Phiếu chờ vẫn được giữ; khi có mạng, bấm nộp lại để kiểm tra trước. Không đóng tab.');
+   }
+   if(checked.receipt){applyElection(checked.data);result={receipt:checked.receipt};}
+   else throw new Error('Lần kiểm tra vừa rồi chưa thấy phiếu được nhận. '+sendError.message+' Bấm nộp lại để kiểm tra lần nữa rồi gửi lại đúng phiếu cũ.');
+  }
+ }
+ if(election.token!==identity.token||getCurrentVoter().code!==identity.code)throw new Error('Phiên đại biểu đã thay đổi. Vui lòng đăng nhập lại để xem xác nhận phiếu.');
+ sessionStorage.setItem('htb_receipt:'+identity.code+':'+round,result.receipt);sessionStorage.removeItem(key);
  closeConfirmBchModal();const voter=getCurrentVoter();voter[round==='bch'?'votedBch':'votedBiThu']=true;renderVoterBar();renderBchVotingGrid();renderBiThuVotingSection();document.getElementById('vote-receipt').textContent='Máy chủ đã nhận phiếu '+(round==='bch'?'BCH':'Bí thư')+'. Mã xác nhận: '+result.receipt;showToast('Máy chủ đã nhận phiếu.','success');try{await refreshElection();}catch{renderElectionStatus('Máy chủ đã nhận phiếu; đang chờ tải lại trạng thái. Mã xác nhận đã lưu trong phiên.');}
 });}
 function confirmSubmitBchBallot(){return submitServerBallot('bch');}
