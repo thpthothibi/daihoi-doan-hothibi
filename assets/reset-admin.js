@@ -66,6 +66,10 @@
     button=document.createElement('button');button.id='reset-test-votes-'+name;button.type='button';button.textContent='Xóa phiếu thử / Chuẩn bị đợt chính thức';button.style.cssText='padding:10px 14px;border:1px solid #e11d48;border-radius:9px;background:#fff1f2;color:#9f1239;font-size:12px;font-weight:700';button.onclick=()=>open(name);anchor.parentElement.append(button);
    }
    button.hidden=election.role!=='admin';
+   let archive=document.getElementById('download-secret-ballots-'+name);
+   if(!archive){archive=document.createElement('button');archive.id='download-secret-ballots-'+name;archive.type='button';archive.textContent='Tải hồ sơ phiếu kín';archive.style.cssText='padding:10px 14px;border:1px solid #0284c7;border-radius:9px;background:#eff6ff;color:#075985;font-size:12px;font-weight:700';archive.onclick=async()=>{archive.disabled=true;try{const data=await electionRequest('rounds/'+name+'/secret-ballots');downloadJson('HO_SO_PHIEU_KIN_'+name.toUpperCase()+'_'+Date.now()+'.json',data);showToast('Đã yêu cầu tải '+data.storedBallots+' phiếu mã hóa. Hồ sơ có thể gồm phiếu trước khi đặt lại vòng.','success');}catch(e){showToast(e.message,'warning');}finally{archive.disabled=false;}};button.parentElement.append(archive);}
+   archive.hidden=!['admin','bch'].includes(election.role);
+
   }
  }
  const originalPermissions=renderRolePermissions;
